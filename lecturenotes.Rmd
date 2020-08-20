@@ -1,6 +1,6 @@
 ---
-title: "Lecture Notes"
-author: "SHH"
+title: "Lecture Notes of the Course Applied Data Science (UBC)"
+author: "SH.Hosseini"
 date: "`r Sys.Date()`"
 output:
   prettydoc::html_pretty:
