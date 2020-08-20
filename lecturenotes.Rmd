@@ -1,0 +1,5470 @@
+---
+title: "Lecture Notes"
+author: "SHH"
+date: "`r Sys.Date()`"
+output:
+  prettydoc::html_pretty:
+    theme: architect
+    highlight: github
+---
+
+
+# Basic Elements of R
+
+```{r include=FALSE}
+library(tidyverse)
+library(htmlwidgets)
+library(DiagrammeR)
+library(DT)
+# Libraries
+library(igraph)
+library(networkD3)
+library(readxl)
+library(haven)
+theme_set(theme_bw())
+student_record_other <- read.csv("~/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/LECTs/Lect1/student_record_othercsv.csv")
+library(formatR)
+
+```
+
+
+## Why R
+
+- R is powerful
+- R was designed by statisticians for statisticians
+- R includes 1000s of packages making our life easy
+- R is easy to learn
+- R is FREE 
+
+## Basic elements of R
+
+
+## Basic elements of R: Data types
+
++ numeric used to identify the continuous values: 1.2, 1.4. 2,...
++ integer used to identify integer values: 1,2,3,...
++ character or string used to identify letters or words: a, b, c,...
++ logical used to identify: TRUE and FALSE
++ factor used to identify groups: Male=1 , Female=2
++ NA used to identify missing values: 2,3.3, NA, 5
++ Time used to identify date and time values
+
+## Basic elements of R: Data structure
+  + vector: represents the collection of a set of components in a single dimension. 
+      + in R we can make a vector as follows VECTOR_NUMERIC <- c(1,2,3.3).
+        + **<-** is called assigning function. It is used to assign or store a set of values. In here I assign the name VECTOR_NUMERIC to a vector including values of 1,2,3
+      + a vector can include one or more than one values.
+      + vector is a single dimensional array.
+      
+
+- matrix: is a two-dimensional array (rows and columns)
+
+```{r, echo=F, tidy=T}
+m <- matrix(1:12, ncol=4, nrow=3, byrow = F)
+m
+```
+  
+- we can make a matrix using column-binding that is cbind() and row-binding that is rbind() functions
+
+```{r echo=T, tidy=T}
+# first lets make two vectors: 
+
+Vector_1 <- c(1,2,3)
+Vector_2 <- c(10,20,30)
+# second lets use cbind()
+Matrix_cbind <- cbind( Vector_1, Vector_2)
+print(Matrix_cbind)
+
+# third what happened when we use rbind()? 
+
+Matrix_rbind <- rbind( Vector_1, Vector_2)
+print(Matrix_rbind)
+```
+
+## Basic elements of R: Data structure cont.
+
++ list: list is the most flexible data structure in R.
+    +  a list could include matrix, vector and data frame. 
+  + data frame is the most important data structure used for data analysis. 
+    + data frame can be considered as the combination of a set of vectors that have the same **LENGTH**
+    + in other words, the vectors have similar number of rows. 
+    + each vector of a data frame can have different data type (character, factor, numeric etc)
+    + so data frame can be considered as the special case of list. 
+    + we have to tell R that we are considering an object as a data frame. 
+
+## Basic elements of R: Indexing
+
+- Indexing
+  + by indexing we can observe or replace certain elements of a vector, a matrix, a list and a data frame. 
+    + we use [ ] for indexing
+  
+```{r echo=T, tidy=T}
+
+Vector_1 <- c(1,2,3)
+Vector_2 <- c(10,20,30)
+
+# if I write Vector_1[3] I will get to see the 3rd element of Vector_1
+Vector_1[3]
+
+# if I write Matrix_cbind[3,2] I will get to see the component of the matrix located at column 2 and row 3 that is 30. 
+
+Matrix_cbind <- cbind( Vector_1, Vector_2)
+Matrix_cbind[3,2]
+
+# I can also change a value by the use of assigning 
+Matrix_cbind[3,2] <- 80.3
+
+# if I make a data frame as follows: 
+Names <- c("Canada", "USA", "Mexico")
+DataFrame <- as.data.frame(cbind(Names, Vector_1, Vector_2))
+DataFrame
+
+# now I can also use indexing to access the values of the DataFrame
+DataFrame[1]
+DataFrame[1,1]
+DataFrame$Vector_2[3]
+
+
+```
+
+
+## Basic elements of R: Functions
+
+- function is an object in R used to perform a task
+  + R has some predefined functions. 
+  + for instance function sqrt() is a function calculating squared-root of a number 
+  
+```{r,echo=TRUE}
+sqrt(9)
+
+sqrt(16)
+
+```
+  + as R users we can also defined a function: 
+  
+```{r, echo=T, tidy=T}
+
+# A simple function add taking the value of x and calculate x+10. 
+  # 1- the name of the function is plus_10 
+  # 2- function take only one value that is called x 
+  # 3- in { } we tell R what the function does 
+
+plus_10 <- function(x) {
+   x +10
+} 
+# we can call the function 
+plus_10(2)
+
+# A bit more complicated function 
+percentage_function <- function(x,y) {
+  percentage_value = 100*(x)/(x+y)
+
+}
+
+percentage_function(5,20)
+
+print(percentage_function(5,20))
+```
+
+
+
+## Basic elements of R: Package
+
++ one of the most important advantages of R is the packages. 
++ packages are a set of functions designed usually by R' users and developers.
++ a package can includes several functions.
++ for instance package "ggplot" is a famous data visualization package.
++ the packages can be downloaded and installed by the following command: 
+```{r,echo=T}
+# install.packages("tidyverse")
+```
+
++ after installing a package you should call the package as follows:
+```{r,echo=T}
+library(tidyverse)
+```
+
++ packages should be called in whenever we open R. 
+
+## Importing datasets 
+
+- you can import datasets into R stored in different formats including: 
+
+  + Stata
+  + SAS 
+  + SPSS 
+  + Excel 
+  + CSV.
+
+- There are three primary packages designed for importing dataset. 
+  + haven: Stata, SAS, SPSS
+  + readxl: Excel files
+  + readr: CSV files
+
+- to import a dataset you can use the following command: 
+  1. I tell R to store the dataset a name that is data1 in here
+  2. I tell R to use function read_excel from readxl package
+  3. I tell R where the file is located on my computer
+
+```{r, eval=F, echo=T}
+
+data1 <- read_excel(
+  "~/Downloads/Main Activity complete SAS-May2014 (2).xlsx"
+  )
+```
+
+
+## Saving a dataset 
+
+- when you make a new dataset it is a good idea to save it. 
+- you can simply use write.csv() function
+- you can save the dataset into a path.
+- you can also save the file into the working directory. In this case you can only tell R what is the name that should be assigned to this new file. 
+- to set the working directory. 
+
+```{r, echo=TRUE, eval=F}
+write.csv(data1.csv, "data1_new.csv" )
+
+# setting the working directory: 
+  ## setwd("~/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/LECTs/Lect1")
+```
+
+## Checking the structure of data frame 
+
+- we could check the structure of a data frame by a function called **str()**. 
+- it is important to check the structure of a data frame to make sure every variable stored correctly. 
+- sometimes variables are stored in the form of a character while they are supposed to be numeric and so on so forth. 
+
+- look the following example: 
+```{r echo=T}
+str(student_record_other)
+```
+
+## Checking the structure of data frame cont. 
+
+- if a variable stored in a wrong class we can do the following: 
+
+```{r echo=TRUE}
+student_record_other$student_name <- as.character(student_record_other$student_name)
+
+str(student_record_other)
+```
+
+- **$** sign is used for indexing. 
+- so we are telling R to transform the class of variable *student_name* from the data frame student_record to character and store it in the same variable. 
+
+## Head and Tail 
+
+- if we want to see the variables and few first observations of a data frame we can use head() function. 
+- if we want to see the variables and few last observations of a data frame we can use tail() function. 
+
+```{r echo=TRUE}
+head(student_record_other, n = 5)
+```
+
+
+# Data Transformation 
+
+```{r}
+library(tidyverse)
+library(htmlwidgets)
+library(DiagrammeR)
+library(DT)
+library(RCurl)
+library(Amelia)
+```
+
+## Learning Objectives: 
+- understanding the concept of data science 
+- understanding the concept of tidy data
+- understanding the methods used to transform datasets. 
+
+
+## Data Science
+
+![R for Data Science available online at : https://r4ds.had.co.nz/wrangle-intro.html](https://d33wubrfki0l68.cloudfront.net/e3f9e555d0035731c04642ceb58a03fb84b98a7d/4f070/diagrams/data-science-wrangle.png)
+
+
+## Why R
+
+- R is powerful
+- R was designed by statisticians for statisticians
+- R includes 1000s of packages making our life easy
+- R is easy to learn
+- R is **FREE** 
+
+## Basic components of R
+
+```{r}
+library(DiagrammeR)
+grViz("
+  digraph {
+    layout = twopi
+    node [shape = circle
+    style = filled
+    fillcolor=white
+    color= blue
+    fontname = Helvetica
+    fontsize=12
+    compound = true, nodesep = .5, ranksep = .25
+    rank=same]
+    R -> {Data_Type, Data_Structure, Function}
+    
+  }")
+```
+
+## Basic components of R
+
+```{r}
+library(DiagrammeR)
+grViz("
+  digraph {
+    layout = twopi
+    node [shape = circle
+    style = filled
+    fillcolor=white
+    color= blue
+    fontname = Helvetica
+    fontsize=12
+    compound = true, nodesep = .5, ranksep = .25
+    rank=same]
+    R -> {Data_Type, Data_Structure, Function}
+    node [shape = triangle
+    style = filled
+    fillcolor=grey]
+    Function -> Package 
+    node [shape = square
+    style = filled
+    fillcolor=green]
+    Data_Type -> Numeric, Factor, Character, Logical, Time [color= red]
+    node [shape = diamond
+    style = filled
+    fillcolor=orange]
+    Data_Structure -> Vector, Matrix, List, DATA_FRAME
+    
+  }")
+```
+
+
+```{r}
+
+
+student_record_other <- read.csv("~/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/LECTs/Lect1/student_record_othercsv.csv")
+student_record_other <- student_record_other %>%
+  mutate(average_grades = average_in.year)
+
+student_record <- read.csv("~/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/LECTs/Lect1/student_record.csv")
+
+time_test <- read.csv("~/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/LECTs/Lect1/time_test.csv")
+
+```
+
+
+
+
+## What is a tidy dataset?
+
+```{r}
+
+grViz("
+  digraph {
+    layout = twopi
+    node [shape = circle, 
+    color=white,
+    fixedsize=true]
+    TIDY -> Variable -> Column [color=blue]
+    TIDY -> Value -> Cell [color=green]
+    TIDY ->      Observations ->    Row [color=red]
+  }")
+```
+
+## What is a tidy dataset?
+
+- A tidy dataset is a dataset where
+  + each variable is in a column
+  + each observation is in a row
+  + each value is in a cell
+  
+![source: R for Data Science](https://d33wubrfki0l68.cloudfront.net/6f1ddb544fc5c69a2478e444ab8112fb0eea23f8/91adc/images/tidy-1.png)
+
+
+ 
+## What is a tidy dataset?
+
+-  What is wrong with the following dataset? 
+
+```{r}
+datatable(student_record, options = list())
+```
+
+
+## What is a tidy dataset?
+
+
+ What is wrong with the following dataset? 
+
+```{r}
+datatable(student_record_other)
+```
+
+## Tidy Data is NECESSARY
+
+- without a tidy data we will not be able to conduct data analysis
+- to make a tidy data set we should start to look for the key variables. 
+  + the key variables could be year, ID (name) or a combination of these two values
+- the key variables then can be used as the starting point for making a tidy dataset. 
+
+## Tidyverse Package 
+- Tidyverse package is a very powerful and efficient tool for making tidy dataset, data visualization, importing data and so on so fourth. 
+- Tidyverse include several packages: 
+  + ggplot2: data visualization
+  + tidyr: data manipulation
+  + dplyr: data transformation
+  + haven: data importing
+  + lubridate: dealing with time and date values
+  + forcats: dealing with factor (categorical) variable
+  
+## A very very important contribution of tidyverse 
+
+- making a tidy dataset includes several steps
+- using tidyverse we will be able to talk to R like a human 
+- we can tell R to do a task one after another by piping
+- one way to think about piping is the following expression **and then**
+- this is the sign that by which R knows we are going to connect our commands **%>%**
+- for instance, take this code: data %>% select(Variable_A) %>% filter(Variable_A>10)
+  + choose the dataset called data AND THEN 
+  + select Variable_A from the data AND THEN
+  + keep only those values in Variable_A that is greater than 10. 
+
+## Data Transformation
+
+- If we have too many variables, however, we do not
+need all of them, we **select** a subset of the variables.
+-  If there are too many rows (observations), however, 
+we only need a subset of them we **filter** the observations. 
+- If we have to make a new variable, we **mutate** existing variables
+to make a new one.
+- We might also have to **group** observations and **summarize** the **grouped** observations.
+- There are situations that we have to **join** several datasets.
+
+## DPLYR package
+
+- dplyr is a an efficient package for data manipulation (as a part of
+“tidyverse”)
+- It has a grammar:
+  + to select a subset of observations we use: **filter()**
+  + to select a subset of variables we use: **select()**
+  + to make a new variable we use: **mutate()**
+  + To calculate a summary of variable we use **summarize()**
+  + to change the order of the observations we use **arrange()**
+  + If the observations are supposed to be grouped by we can use **group_by()**
+  + to join datasets we use **join**
+
+## Transform it
+
+- let's use the dataset called student record
+```{r}
+datatable(student_record, options = list())
+```
+
+## Transform it: filter()
+
+- filter observations where age is exactly equal to 38
+```{r, echo=T}
+
+ 
+
+student_record %>%
+  filter(age == 38) %>%
+  datatable()
+```
+
+- filter observations where age is greater than  37
+
+
+```{r, echo=T}
+
+student_record %>%
+  filter(age > 37) %>%
+  datatable()
+```
+
+## Handy filter functions
+
+- is equal to: ==
+- is greater than: >
+- is greater thand or equal: >= 
+- and: &
+- or: |
+- is not: !
+- is not equal to: !=
+- you could also use functions for filtering, example: filter(x> mean (x))
+  + this command filter values of x that are greater than mean of x. 
+  
+```{r, echo=T, tidy=T}
+# using and: &
+student_record %>%
+  filter(age > 37 & final_exam_grade>70) %>%
+  datatable()
+
+```
+
+```{r, echo=T, tidy=T}
+# age is not equal to 37 (!=)
+student_record %>%
+  filter(age != 37) %>%
+  datatable()
+
+```
+
+
+- conditional filtering: we can filter observations of one variable based on the values of another variable
+- filter observations in the variable final_exam_grade where assignment_grade is greater than 80
+
+```{r, echo=T}
+
+student_record %>%
+  filter(
+    final_exam_grade >70, 
+    assignment_grade>80 ) %>%
+  datatable()
+```
+- filter more than one observation by hand.
+- filter observations where student_name is A, D, J
+- the sign %in% here can be used as a way to say it is in the range of 
+
+```{r, echo=T}
+student_record %>%
+  filter(student_name %in% c("A","D","J")) %>%
+  datatable()
+
+```
+
+## Transform it: select 
+- select two variables of student_name and age 
+
+```{r, echo=T}
+
+
+student_record %>%
+  select(student_name, age) %>%
+  datatable()
+```
+- select two variables of student_name and age while we also change the name of the variable student_name to name
+
+```{r, echo=T}
+
+
+student_record %>%
+  select(name = student_name , age) %>%
+  datatable()
+```
+- we can also use the variables using functions such as starts_with(), ends_with() and contains()
+
+```{r, echo=T}
+
+student_record %>%
+  select(starts_with("a")) %>%
+  datatable()
+```
+- we can also use the variables using functions such as starts_with(), ends_with() and contains()
+
+```{r, echo=T}
+
+student_record %>%
+  select(contains("g")) %>%
+  datatable()
+```
+
+## Transform it: mutate()
+
+- mutate is used to make a new variable 
+- different ways to use mutate
+- we can use simple operation to make a new variable. here we want to know the differences between final exam and assignment grade and store it in a new variable called grade_difference 
+```{r echo=TRUE}
+
+student_record %>%
+  mutate(
+    grade_difference = (final_exam_grade - assignment_grade)
+  ) %>%
+  datatable()
+```
+
+## Transform it: mutate()
+
+- we can also use lead() and lag() functions to make variables referring to the leading and lagging values respectively. In time series analysis this can be handy. 
+
+```{r echo=TRUE}
+
+
+food_price <- cbind.data.frame(date=c (2010,2011,2012,2013),price= c(10,15,20,10))
+food_price %>%
+  mutate(
+    lag_price = lag(price),
+    change_price= 100*(price-lag_price)/price
+
+    
+  ) %>%
+  datatable()
+```
+
+
+
+## Transform it: group by and summarize
+
+- there are situation where we want to group variables by the values of a categorical variable and summarize the values
+- below is a dataset showing the characteristics of 32 cars such as: 
+  + mileage per gallon (mpg)
+  + number of cylinders (cyl), 
+  + horse power
+- I would like to to know on average what is the mpg of cars with 4, 6 and 8 cylinders. 
+
+```{r}
+mtcars %>%
+  datatable()
+```
+
+
+## Transform it: group by and summarize, cont.
+
+- so I can use group by and summarize functions together. 
+- the summarize function can be used to calculate mean, standard deviation, standard error of mean, standard, min, max, etc.
+
+```{r, echo=T}
+cars <- mtcars %>%
+  group_by(cyl) %>%
+  summarize(mean_mpg = mean(mpg))
+
+datatable(cars, options = list())
+```
+
+
+## Transform it: group by and summarize, cont.
+
+- we can group by more than one variable. 
+
+- Again we use a dataset celled mtcars. This dataset is attached to R and includes information about mileage per gallon (mpg), cylinder(cyl), displacement (disp), horse power (hp), weight (wt), transmission type (automatic vs. manual in am variable). 
+
+
+```{r, echo=TRUE}
+
+ mtcars %>%
+  datatable()
+
+mtcars %>% 
+  
+  group_by(am, cyl) %>%
+  
+  summarise(
+            count_group = n(),
+    
+             mean_mpg_transmission = mean(mpg),
+    
+             sd_mpg_transmission = sd(mpg)
+  
+           ) %>%
+  round(digits = 1)
+
+```
+
+
+## Transform it: group by and summarize, cont.
+
+- in some cases we want to summaries at more than one variables and have more than one summary values so we can use summarise_at() function. 
+- there are two components that should be introduced inside the summarise_at(). 
+  1. vars() that shows what variables we want to summarise. 
+  2. lst() that shows what summary functions we are looking for. 
+
+```{r,echo=TRUE}
+mtcars %>%
+  group_by(am) %>%
+  summarise_at(
+    
+    vars(mpg, wt ), 
+    lst(mean,median, sd)) %>%
+  
+  round(digits = 1) %>%
+  datatable()
+```
+
+
+## Joining the datasets
+
+- in these days it is very common that there are several datasets for the same objects. 
+- for instance, the data for the same animals are collected in different times
+- individuals health, eating habits and socioeconomic status could also be stored in different tables. 
+- you probably have heard about SQL whose main object is to deal with relational databases. 
+- however, dplyr provides more efficient tools to join and manipulate related datasets. 
+- this is specially the case because we can use piping (%>%) 
+
+## Joining the datasets, cont. 
+
+- I have here used the very handy package of haven. 
+- haven allows you to import datasets to R by knowing their urls or addresses on your computer. 
+- here I use **National Health and Nutrition Examination Survey** 
+- it is a datasets including several tables such as the demographic data, examination data, dietary intakes and blood test results. 
+- I import two datasets called demographic and blood pressure examination. 
+
+## Joining the datasets, cont. 
+
+
+```{r, echo=TRUE}
+demographic <- haven::read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.XPT")
+blood_pressure <- haven::read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BPX_I.XPT")
+
+# the SEQN is a variable used to identify a person. 
+#I use dplyr to keep 5 persons and two variables in the deomographic dataset
+# (age and id)
+# then I keep only five observations. 
+demographic_5 <- demographic %>%
+  select(id = SEQN, age = DMDHRAGE) %>%
+  filter (id %in% c(83732,83733,83734,83735,83736 )) 
+
+demographic_5
+
+# then I use dplyr to keep two variables of id and systolic. 
+# I also keep five observations (individuals) four of which are the same as the demographic data
+blood_pressure_5 <- blood_pressure %>%
+  select(id=SEQN, systolic = BPXSY1) %>%
+  filter (id %in% c(83732,83733,83734,83735,83737 )) 
+
+blood_pressure_5
+```
+
+
+## Joining the datasets, cont. 
+
+```{r, echo=TRUE}
+# left join: keep everything from the left hand side dataset (demographic_5) 
+# and then join rows from the right hand side dataset that are matched based on id.
+# If there is no match, the observation from the right hand side
+# will be shown as NA.  
+
+left <- left_join(demographic_5, blood_pressure_5, by="id")
+
+left
+
+# right join: it is the opposite of left join
+right <- right_join(demographic_5, blood_pressure_5,by="id") 
+
+right
+  
+```
+
+```{r, echo=TRUE}
+
+#inner join: join and keep only those rows that have the same id
+
+inner <- inner_join(demographic_5, blood_pressure_5,by="id" )
+inner
+
+# full join: join all rows and and the information of the rows that is not the same in both datasets. 
+
+full <- full_join(demographic_5, blood_pressure_5,by="id" )
+full
+
+```
+
+
+```{r,echo=TRUE}
+
+# semi join: only the information of matching id will be joined 
+
+semi <- semi_join(demographic_5, blood_pressure_5,by="id" )
+semi
+
+#anti join: only the information of the left hand side with no match will be kept.  
+
+anti <- anti_join(demographic_5, blood_pressure_5,by="id" )
+anti
+```
+
+
+```{r, echo=T}
+
+# stack the datasets on top of each other (append) 
+append_rows <- bind_rows(demographic_5, blood_pressure_5)
+
+append
+
+# patch the datasets based on columns. 
+patch <- bind_cols(demographic_5, blood_pressure_5)
+
+patch
+```
+
+
+## Time and Date 
+
+- usually we can see the time and date variables in three formats:
+  + date: 2020/01/10
+  + time: 07:30:00 PM or 19:30:00 
+  + time-date (combination of time and date): 2020/01/10 07:30 PM
+- date and times variables are mostly stored as character or factor. 
+- however, there are situations where we have to calculate the time intervals.
+- There are two very good package in R that are **lubridate**.and "**hms** 
+- lubridate has some very helpful function to create variables with right data and data-time formats.
+- lubridate does not support the format change for time object so we use hms package
+- in case we the time object is stored as AM or PM we have to use strptime function. 
+
+
+## Time and Date, cont. 
+
+- Look at the dataset below. it is a fraction of a larger dataset measuring dairy cow's activities by sensors. 
+- we have two columns in here called date and time. 
+- looking at the structure of the dataset we called it time_test we have 
+
+```{r, tidy=T}
+time_test$time <- as.character(time_test$time) 
+glimpse(time_test)
+```
+
+
+## Time and Date, cont. 
+
+- In th dataset I have a variable that is called date
+- the dataset name is time_test it has two variables that are called date and time. 
+- I use glimpse() function to find out about the structure of the dataset
+- what is structure of a dataset?
+- I want to make two variables called time_formatted and date_formatted. 
+  + they are stored as time and date objects not factor or character. 
+- I also want to make a new variable called date_time including both date and time in one column. 
+
+```{r echo=T}
+glimpse(time_test)
+# transform date variable stored as factor (i.e. categorical variable) to date format 
+library(lubridate)
+time_test <- time_test %>%
+  mutate(date_formatted = as_date(date))
+
+time_test %>%
+  datatable()
+```
+
+## Time and Date, cont. 
+
+```{r echo=T}
+library(hms)
+
+hms_time <- cbind.data.frame(
+  id= c(1,2,3), 
+  time = c("02:10:00","03:10:00", "16:10:00" )
+)
+
+glimpse(hms_time)
+hms_time <- hms_time %>%
+  mutate(time_new = hms::parse_hms(time))
+```
+
+## Time and Date, cont. 
+
+- transform time variable stored in 12 hours format (with AM/PM) to 24 hours format  
+ 1. use time_test
+ 2. change the format using format() function
+ 3. use strptime() function
+ 4. the variable that we want to change its format is time.
+ 5. the current format is "%I:%M %p" (%p is for AM/PM)
+ 6. the new format is format="%H:%M:%S"
+
+
+```{r echo=T}
+
+library(hms)
+time_test <- time_test %>%
+  mutate(time_formatted = format(strptime(time, format= "%I:%M %p"),
+                                 format="%H:%M:%S")
+        )
+
+time_test$
+time_test %>%
+  datatable()
+```
+
+## Time and Date, cont. 
+- making date_time variable
+- this can be done in different way, however below I use the easiest one. 
+  1. use time_test data
+  2. use unite function from tidyr package to unite two variables of time_formatted and date_formatted into a variable called time_date. Do not remove the old variables. also the separation between two values of time_formatted and date_formatted in the new variable of time_date should be a *space*. 
+  3. using mutate function make a new variable called time_date_formatted
+  4. to have the write format use the function as_datetime from lubridate package 
+
+
+
+
+```{r echo=T}
+time_test <- time_test %>%
+  unite(
+    "date_time",
+    date_formatted,time_formatted, 
+    remove = F, 
+    sep = " ") %>%
+  mutate(
+    date_time_formatted= lubridate::as_datetime(date_time))
+
+time_test %>%
+  datatable()
+```
+
+
+```{r}
+knitr::opts_chunk$set(echo = FALSE)
+library(tidyverse)
+library(htmlwidgets)
+library(DiagrammeR)
+library(DT)
+theme_set(theme_bw())
+library(RCurl)
+library(Amelia)
+student_record_other <- read.csv("~/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/LECTs/Lect1/student_record_othercsv.csv")
+student_record_other <- student_record_other %>%
+  mutate(average_grades = average_in.year)
+
+student_record <- read.csv("~/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/LECTs/Lect1/student_record.csv")
+
+
+```
+
+```{r}
+
+student_name <- LETTERS[seq( from = 1, to = 10 )]
+age <- round(runif(10,min=25, max=40))
+assignment_grade <- round(runif(10,min=60, max=100))
+final_exam_grade <- round(assignment_grade*(runif(10,min=0.7, max=.95)))
+supervisor_department <- c("Dr.ZZ_economics","Dr.XX_Animal Science",
+                           "Dr.YY_Soil Science",
+                           "Dr.VV_Pharmacy","Dr.MM_Epidemiology","Dr.TT_Nutrition","Dr.QQ_Agriculture","Dr.ZZ_economics",
+                           "Dr.XX_Animal Science","Dr.KK_Business")
+
+student_record <- cbind.data.frame(student_name = student_name, age = age, supervisor_department = supervisor_department, final_exam_grade = final_exam_grade,  assignment_grade = assignment_grade)
+
+
+
+
+```
+
+## Learning Objective
+
+- understanding the concept of data science 
+- understanding the concept of tidy data
+- understanding the concept of long and wide datasets
+- learning how to change the structure of a dataset from wide to long vice versa
+- learning to separate columns 
+- applying the tidy methods to a real life example
+
+## Data Science 
+
+![Data Science is a Process, source: R for Data Science available online at : https://r4ds.had.co.nz/wrangle-intro.html](https://d33wubrfki0l68.cloudfront.net/e3f9e555d0035731c04642ceb58a03fb84b98a7d/4f070/diagrams/data-science-wrangle.png)
+
+## What is a tidy dataset?
+
+- A tidy dataset is a dataset where
+  + each variable is in a column
+  + each observation is in a row
+  + each value is in a cell
+  
+![source: R for Data Science](https://d33wubrfki0l68.cloudfront.net/6f1ddb544fc5c69a2478e444ab8112fb0eea23f8/91adc/images/tidy-1.png)
+
+  
+## What is a tidy dataset?
+
+-  What is wrong with the following dataset? 
+
+```{r}
+datatable(student_record, options = list())
+```
+
+
+## What is a tidy dataset?
+
+
+ What is wrong with the following dataset? 
+
+```{r}
+datatable(student_record_other)
+```
+
+## Tidy Data is NECESSARY
+
+- without a tidy data we will not be able to conduct data analysis
+
+- to make a tidy data set we should start to look for the key variables. 
+  + the key variables could be year, ID (name) or a combination of these two values
+- the key variables then can be used as the starting point for making a tidy dataset. 
+
+
+
+
+## Change the data structure: LONG and WIDE
+
+## Wide
+
+- Look at the following dataset
+
+```{r}
+datatable(student_record_other)
+```
+
+- this dataset includes information about students' performances in the last **two** years. 
+- therefore, there are two records per student. 
+- we however are interested in making a new dataset that we can join with our other dataset. 
+- so we have to change the structure of the dataset so we have one record per student. 
+
+## Wide: cont. 
+
+- therefore, we use function pivot_wider in package tidyr as follows:
+
+  1- make a new dataset called wide_record
+  
+  2- use the dataset called student_record_other and then (%>%)
+  
+  3- use pivot_wider function
+  
+  4- use student_name in the dataset called student_record_other so R knows what variable is used to define ID in the new dataset
+  
+  5- the name of the new variables are extracted from variable  "year". 
+  
+  6- the values of new variables come from average_grade
+  
+
+```{r, echo=T}
+wider_record <- student_record_other %>%
+  pivot_wider(
+    id_cols= student_name,
+    names_from = year,
+    values_from = average_grades
+    )
+
+datatable(wider_record, options = list())
+
+# add scholarship variable to values_from using c(average_grade, scholarship)
+```
+
+
+## Longer 
+
+- There are situations where we want to stack observations on top of each other based on a key variable. 
+
+
+- In this case we are making our dataset longer. 
+
+## Example
+
+- Look at the following dataset 
+
+```{r}
+datatable(student_record, options = list())
+```
+
+
+- The dataset includes information about names, ages and grades of 10 students. 
+- the final exam and assignment grades are stored in different variables. 
+- however our boss is not really good at his job and he has no idea what a tidy data is. 
+- so he asks us to change the structure of data set so the grades of both final exam and assignment are stored in one variable.
+
+## Longer: cont.
+- so we use package tidyr and from that package we use function piovt_longer and do the following:
+
+  1- make a new dataset long_record
+  2- tell R that use the dataset called student_record and then (%>%)
+  3- use pivot_longer
+  4- the columns that are going to be used for stacking are final_exam_grade, assignment_grade.
+    + so we tell R, cols = c(final_exam_grade, assignment_grade)
+  5- tell R that the values of final_exam_grade, assignment_grade goes to a new variable called **grades**
+  6- tell R that the name of a variable identifying final_exam versus assignment_grades goes to grades_type.
+
+```{r, echo=T}
+
+long_record <- student_record %>%
+  
+  pivot_longer(
+    
+    cols = c(final_exam_grade, assignment_grade),
+               values_to = "grades",
+               names_to = "grades_type"
+    
+               )
+datatable(long_record, options = list())
+
+# add age to cols
+```
+
+## Separating 
+
+- In a tidy data each variable should be stored in a column. 
+- look at the following dataset again: 
+
+```{r}
+datatable(student_record, options = list())
+```
+
+## Separating: cont.
+
+- there is variable in this dataset called supervisor_department.
+- so this is not consistent with the definition of tidy data.
+- therefore, we have to separate the continent of this column.
+- we can use function separate to split a column as follows: 
+  1. use student_record dataset and then
+  2. use separate function to 
+  3. separate variable supervisor_department 
+  4. into tow new variables called supervisor and department
+  5. the separation of the columns should be base on the the pattern identified by sep = "**-**"
+```{r, echo=TRUE}
+student_record_sep <- student_record %>% 
+  separate(
+    supervisor_department,
+    into = c("supervisor", "department"),
+    sep = "_"
+    )
+datatable(student_record_sep, options = list())
+```
+
+
+## Missing Values
+
+- missing values are one of the most important issues that we have to deal with to make a tidy dataset. 
+
+- the first step is to identify the missing values. 
+- we can do that using a package called **Amelia** as follows: 
+
+```{r}
+name <- c("A", "B", "C", "D")
+Age <- c(NA,25,35, 30)
+Sex <- c("Male","Female",NA,"Male")
+age_sex <- cbind.data.frame(name,Age,Sex)
+```
+
+  1. use missmap() function of package Amelia
+  2. inside the bracket write the name of the dataset
+  3. look at the heat map and percentage of missing values. 
+  4. if time allows we will work on few methods such as MICE to impute the missing value
+
+```{r, echo=T}
+# install.packages("Amelia")
+age_sex
+missmap(age_sex)
+```
+
+
+# Data Visualization 
+
+
+## GGPLOT : THE *G*rammar of *G*graphics *PLOT*ting
+
+- ggolot is a visualization tool in "R" that is highly popular and powerful. 
+
+- the main advantage of ggplot is its easy to learn and remember grammar
+- once you learn the grammar you can depict many different types of graphs. 
+
+## The components of ggplot: Main components
+
+* look at the following ggplot code: 
+  + ggplot(**data**= Data, **aes**(x= X, y= Y)) **+** \
+  **geom_point**()
+
+
+* **Data** is the dataset including the variables used for creating the plot. 
+
+## The components of ggplot: Main components
+
+* **Aesthetic** is a function that tells R about the *variables* used in the plot 
+  + what variable is on the x axis 
+  + what variable is on the y axis
+  + what variable determines the color, shape and size of the geometric objects.
+
+* **Geometric Object** is the types of graphs that we want to plot.
+  +  examples are geom_line (line graph), geom_point (scatterplot), geom_col (column graph), geom_bar (bar graph), geom_density (density plot)
+
+* using   **+**   sign we can add more layers to our plot. 
+
+## ggplot components: others 
+
+* **Faceting** : to split graphs based on a categorical variable
+  + if Gender includes two levels of male and female using codes below we can have two graphs one for males and one for females:
+  + ggplot(**data**= Data, **aes**(x= X, y= Y)) **+** \
+      **geom_point**() + \
+       **facet_wrap(~Gender)**
+  
+* **Statistical Transformations**: using stat=" . "  we can trasnfer the data  
+  + For instance, if we have stat="identity" we are asking R to plot the real value of the x and y.
+  + However, if we have stat = "summary" we are asking R to plot a summary of observations (e.g. mean, standard deviation). 
+
+## ggplot components: others 
+
+
+* **Coordinate System** :  
+  + For instance, coord_flip, rotates the x and y axis 
+  + coord_polar connects both ends of the axis to each other. 
+
+* **Position Adjustments** :it is called for by position = "".
+- There are usually three types of positions that are used more than others including:
+  + "identity" where everything is put in its position as it is.
+  + "stack" where the graphs are stacked on top of each other. 
+  + finally "dodge" that put the graphs in different positions for a better view. 
+
+* **Labeling, themes** : how to make labels for data, axis, and titles and change their location or size. 
+
+## Importing Data and Libraries
+
+- When you work with Rmarkdown make sure you are loading the libraries you need
+- also provide the physical location of the data as a code inside the markdown. 
+
+## Data: NHANES
+- we use NHANES data 
+- you can simply install the package called NHANES. 
+- use NHANES to import the data.  
+-  I only keep the observations where the survey year is 2009-2010 (filter(SurveyYr=="2009_10")). 
+- there are 76 variables in the dataset but I only keep 6 including gender, age, race, education level, body mass index (BMI) and total cholesterol (total_chol)
+- I also take a random sample of the data that is 5% of total number of observations (sample_frac(size=5/100).
+- I also use na.omit() to drop the missing rows. 
+
+```{r echo=FALSE, tidy=TRUE, message=FALSE, warning=FALSE}
+
+library(tidyverse)
+library(gridExtra)
+library(plotrix)
+library(scales)
+library(ggthemes)
+library(gganimate)
+library(NHANES)
+```
+
+
+```{r echo=TRUE,message=FALSE}
+
+library(NHANES)
+NHANES <- NHANES::NHANES %>%
+  filter(SurveyYr=="2009_10", BMI<55, Age>25) %>%
+  select(Gender, Age, Race1, Education, BMI, total_chol = TotChol) %>%
+    sample_n(size = 600,replace = T) %>%
+  na.omit()
+
+```
+
+
+## The location of ggplot components
+
+**creating a plot using ggplot2 function includes the following easy steps:** 
+
+- First,  we tell R to use function ggplot, where the data used is NHANES 
+  + ggplot( data=NHANES, )
+
+- Second, we tell R about the variables used in depicting the plot. 
+  + Here we tell R variable BMI is going to be on the X-axis (x= BMI) and variable total_chol is going o be on Y-axis (y= total_chol)
+  + ggplot( data=NHANES, aes( x=BMI, y=total_chol)). 
+  + note that you should use **aes()** so ggplot knows you are referring to the variables. 
+ 
+## The location of ggplot components
+  
+  
+- Third, we tell R the type of graph is the point graph (geom_point) : 
+ + ggplot( data=NHANES, aes(x=BMI, y=total_chol)) + \
+  geom_point()
+
+- Finally, we tell R the observations should be distinguished with different colors based on the variable Gender.
+  + note that I wrote geom_point(aes(color= Gender)) because Gender is a variable so I should refer to it by the use of aes().
+ + ggplot(data=NHANES, aes(x=BMI, y=total_chol)) + \
+          geom_point(aes(color= Gender)) 
+
+## The location of ggplot components
+
+```{r,echo=TRUE}
+ggplot(data=NHANES, aes(x=BMI, y= total_chol ))
+```
+
+
+## Layers 
+
+We should tell R about the graph type (*geom_*)
+
+*geom_...* is about the type of graph, we can add more than one layers of geom to a graph
+
+ 
+
+
+```{r,echo=TRUE}
+ggplot(data=NHANES, aes(x=BMI, y= total_chol )) +
+  geom_point() 
+```
+
+## Layers 
+
+- with aes() we tell R to distinguish between the data points based on the values of another variable. 
+-The differentiation can come in the forms of different colors, different shapes, or sizes. 
+- For instance, below we plot the scatterplot of total cholesterol and BMI and we use variable Gender (i.e. if male or female) to distinguish between males and females in depicting the relationship between total cholesterol and BMI.  
+
+## Layers 
+
+```{r,echo=TRUE}
+ggplot(data=NHANES, aes(x=BMI, y= total_chol )) +
+  geom_point(aes(color=factor(Gender)))
+
+# in here we tell R  the color of data points should be different based on the gender. 
+```
+
+## shapes 
+- we can also change the shape of the points
+
+ 
+
+
+```{r,echo=TRUE}
+
+ggplot(data = NHANES, aes(x=BMI, y= total_chol )) +
+  geom_point(aes(color= Gender, shape=Gender)) 
+
+# in here we tell R  the color and the SHAPE of data points should be different based on the Gender  in the data.
+
+
+```
+
+## GEOMETRIC BJECT
+
+- There are several geometric objects that we can use
+  + the type of geometric object highly depends on the type of variables (continuous or categorical). 
+
+## Geometric Object with one continuous variables 
+- geom_histogram: draws histogram of continuous variable
+- geom_density: draws density plot of continuous variable
+
+## Histogram
+- Simple histogram
+
+ 
+
+
+```{r,echo=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=BMI)) + 
+  geom_histogram()
+
+
+```
+
+## Histogram
+
+ 
+
+
+
+```{r}
+NHANES %>%
+  ggplot(aes(x=total_chol)) + 
+  geom_histogram()
+```
+
+
+## Histogram 
+
+-  we can add more information to make a better graph
+
+
+
+```{r,echo=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=BMI)) + 
+  geom_histogram(bins= 10,
+                 fill="blue", 
+                 color="red")
+
+
+```
+
+## Histogram: even more information can be added 
+
+- below we plot the histogram for BMI variable where we add more information to make a better looking graph. 
+
+- we want to have a histogram of BMI based on the variable genders
+
+- we can also use position = "fill" to see the proportions. 
+- other types of positions are identity where it shows the data as it is. 
+- also, we can use position = "dodge" to present the bins for each sex differently. 
+
+## Histogram: even more information can be added 
+
+- a rule of thumb: the number of bins = square root of number of observations
+- I have 303 observations so the number of bins is 17.4 so I choose bins=17 
+```{r,echo=TRUE,tidy=TRUE,split=TRUE}
+
+NHANES %>%
+  na.omit() %>%
+  ggplot(aes(x=BMI)) + 
+  geom_histogram(position = "stack",  
+                 bins=17 ,
+                 color="black",
+                 aes(fill=factor(Gender)))
+# change the position to identity, dodge or fill and see what will happen
+# change the number of bins 
+# change fill= Race1
+```
+
+## DENSITY plot 
+
+- A density plot can be used to show the probability distribution of a continuous variable. 
+- Note that in interpreting a density plot we should consider the area under the curve and not a single data point. 
+
+## DENSITY plot 
+
+```{r,echo=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=BMI)) + 
+  geom_density(fill="purple",
+               color="red", 
+               alpha=0.6) 
+# change alpha values to change the level of transparency in the filled color. 
+```
+
+## Density Plot: add more information
+ 
+```{r,echo=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=BMI)) +
+  geom_density(position="identity",
+               alpha=0.3,
+               aes(fill=factor(Gender))) 
+#change the postion to "stack"
+```
+
+
+## BAR plot for categorical variable 
+
+- in the dataset we have a variable called race that is categorical variable
+- so we can use geom_bar to see the number of individuals in each category
+
+ 
+
+
+
+```{r,echo=TRUE}
+
+
+NHANES %>%
+  ggplot(aes(x=Race1)) + 
+  geom_bar()
+
+```
+
+## BAR plot for categorical variable: add more information 
+
+```{r,echo=TRUE}
+
+
+NHANES %>%
+  ggplot(aes(x=Race1)) + 
+  geom_bar(color="black", 
+           fill="green") 
+```
+
+
+## Graphs when we have two continuous variables 
+
+-  Scatterplot: a simple case 
+
+ 
+
+
+```{r,echo=TRUE}
+
+NHANES %>% 
+  ggplot(aes(x=BMI, y= total_chol )) +
+  geom_point(color="black",
+             shape=6, 
+             size=3) 
+#change the shape number from 4 to 5 or other numbers. 
+```
+
+## Scatterplot: different colors and shapes for males and females. 
+
+-  we can distinguish between data points based on a third variable 
+- note that here we tell R to make different colors for the variable Gender using aes(). 
+
+ 
+
+
+```{r,echo=TRUE}
+NHANES %>% 
+  ggplot(aes(x=BMI, y= total_chol )) +
+  geom_point(aes(color=Gender, shape=Gender), size=3)  
+
+```
+
+## Scatterplot and Geom_smooth:
+- geom_smooth is used to make a prediction line. 
+- In geom_smooth we can determine the method of prediction. 
+- There are two primary methods that we introduce here that are "loess" (stands for locally estimated scatterplot smoothing) and "lm" (stands for linear model).
+- se = F in here tells R that we do not want to plot standard error around the prediction line.
+
+## Scatterplot and Geom_smooth:
+
+```{r,echo=TRUE,tidy=TRUE}
+
+
+#method = "loess"
+
+NHANES %>% 
+  ggplot(aes(x=BMI, y= total_chol )) +
+  geom_point(color="blue") +
+  geom_smooth(color="red",
+              method = "loess", 
+              se=F) +
+    geom_vline(xintercept = c(seq(from=10, to = 60, by=3)))
+  
+
+#change se=F to se=T
+# you can change the color as well. 
+```
+
+
+## Scatterplot and Geom_smooth:method= "lm" (linear model)
+
+```{r,echo=TRUE}
+
+# scatterplot and geom_smooth: method= "lm" 
+NHANES %>% 
+  ggplot(aes(x=BMI, y= total_chol )) +
+  geom_point(aes(color=factor(Gender))) +
+  geom_smooth(method = "lm",
+              se=F, 
+              aes(color=factor(Gender)))
+
+```
+
+## Scatterplot and Geom_smooth:
+
+
+```{r,echo=TRUE,tidy=TRUE}
+NHANES %>% 
+  ggplot(aes(x=BMI, y= total_chol )) +
+  geom_point(aes(shape=factor(Gender),
+                 color=factor(Gender), 
+                 size=2), 
+            alpha=0.7) +
+  geom_smooth(method = "lm",
+              se=F, size=1,
+              aes(color=factor(Gender))) 
+```
+
+## Graphs for continuous y and categorical  x 
+
+- Column plot
+
+```{r,echo=TRUE,tidy=TRUE,}
+
+# plot of the average of BMI across races 
+NHANES %>% 
+  group_by(Race1 ) %>%
+  summarize(mean_BMI= mean(BMI)) %>%
+  ggplot(aes(x=Race1,
+             y=mean_BMI)) +
+  geom_col(fill="blue",
+           color="red") +
+  geom_label(aes(label=round(mean_BMI, digits = 1)))
+# here we are using geom_lable to add label to the columns. so we are using aes() in the codes. Because we are telling R to use a variable to make the labels. round(mean_BMI) is used to round the calculated labels with one digit. 
+
+# change the digit = 2.
+# remove the round. 
+# change the position to f
+```
+
+
+## Column Graph using stat
+
+- Above we used dplyr to make the mean BMI across age groups. 
+- In the case of bar and column graph, we can use the "stat" to statistically transform data for plotting.  
+- So we have to tell R that we want the stat="summary" that is we want to make a graph of summary values.
+-By default, the summary calculated is mean.
+- However, we can use fun.y=sd for standard deviation or sum for sum, min for minimum, max for maximum, etc. 
+
+## Column Graph using stat
+
+```{r,echo=TRUE}
+
+NHANES  %>% 
+  ggplot(aes(x=Race1, y=BMI)) +
+  geom_bar(fill="blue", color="red",
+           stat = "summary", fun.y=mean) 
+# change the fun.y = mean to fun.y = sd
+```
+
+## Faceting
+- Functions facet_grid or facet_wrap can be used to split the graph into two graphs based on a categorical variable. 
+- For instance, in here we tell R to make two graphs based on Gender using facet_grid(~ Gender). 
+
+- Also, we can use coord_polar to make a graph similar to a pie chart or radar chart. we can also use polar_flip to rotate the graph. 
+
+## Faceting
+
+```{r,echo=TRUE}
+
+  NHANES %>%
+  group_by(Race1, Gender) %>%
+  summarise(mean_BMI = mean(BMI)) %>%
+  ggplot(aes(x=Race1, y=mean_BMI)) +
+  geom_col(aes(fill=Race1)) +
+  facet_wrap(~Gender, ncol=2) 
+```
+
+## Line Graph
+
+```{r,echo=TRUE, message=FALSE}
+
+NHANES %>%
+  ggplot(aes(x=Race1, y=total_chol)) +
+  geom_line(stat="summary", group=1) +
+  facet_wrap(~Gender) 
+
+NHANES %>%
+  ggplot(aes(x=Race1, y=total_chol)) +
+  geom_line(stat="summary", aes(group=Gender)) 
+```
+
+## Box Plot
+- Box plot includes 5 important information about the distribution of a continuous variable including minimum, quantile 1 (25%), median, quantile 3 (75%), maximum and outliers. 
+
+## Box Plot
+
+```{r,echo=TRUE}
+
+NHANES %>%
+  na.omit() %>%
+  ggplot(aes(x=factor(Race1), y=BMI)) +
+  geom_boxplot(aes(fill=factor(Race1))) 
+```
+
+## Box Plot
+- Using notch we can also test the significant differences between two groups 
+
+ 
+
+
+```{r,echo=TRUE, message=FALSE}
+NHANES %>%
+  ggplot(aes(x=factor(Race1), y=BMI)) +
+  geom_boxplot(notch = T,
+               aes(fill=factor(Race1))) 
+# add coord_flip() 
+```
+
+## Box plot and density plot
+
+```{r,echo=F, message=FALSE,tidy=TRUE}
+
+box <- ggplot(data= NHANES, aes(y=BMI)) +
+  geom_boxplot() + 
+  coord_flip() +
+  labs(x="Box\nplot")
+
+
+den <- ggplot(data= NHANES, aes(x=BMI)) +
+  geom_density(position = "stack") +
+  geom_vline(aes(xintercept = c(median(BMI))) )
+
+gridExtra::grid.arrange(box,den, ncol=1)
+
+```
+
+
+## Violin plots show the distribution of observations. 
+
+```{r,echo=TRUE}
+
+
+
+NHANES %>%
+  ggplot(aes(x=factor(Race1), y= total_chol )) +
+  geom_violin(aes(fill=factor(Race1))) +
+  coord_flip() +
+  theme_classic() 
+```
+
+## Violin plots show the distribution of observations. 
+
+- Violin graphs show the distribution of observation. Combining them with box plots could be informative.
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>%
+
+  ggplot(aes(x=factor(Race1), y=BMI)) +
+  
+  geom_violin(aes(fill=factor(Race1))) +
+  
+  geom_boxplot(aes(fill=factor(Race1))) +
+  
+  coord_flip() +
+  
+  theme_classic() 
+# we can use theme_X to change the theme of a graph. 
+```
+
+## Notch and Violin plots
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=factor(Race1), y=BMI)) +
+  geom_violin(aes(fill=factor(Race1))) +
+  geom_boxplot(notch = T,
+               aes(fill=factor(Race1))) +
+  coord_flip() +
+  theme_classic() 
+```
+
+## Point and Violin plots
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=factor(Race1), y=BMI)) +
+  
+  geom_violin(fill="NA",
+              color="blue")+
+  
+  geom_jitter(aes(color=factor(Race1))) +
+  
+  theme_classic() +
+  coord_flip()
+```
+
+
+## Error Bar
+- Error bars can be highly informative. 
+- Using dplyr and ggplot we can plot error bars. 
+- We have to use group_by, summarize(mean(.)) and summarize(std.error(.)) along with geom_col and geom_errorbar to make the graph.
+
+## Error Bar
+
+
+- Below we plot the average BMI over races. 
+- First, group the observations by race (Race1). 
+- Second, summarise variable BMI. 
+- Because we are looking for confidence intervals we make two variables that are
+  + mean that is the average BMI
+  + sem that is the standard error
+  + we calculate the mean and sem using summarize(mean = mean(BMI), sem=std.error(BMI)). 
+  + To be able to calculate standard errors you should install and load package "plotrix"
+- Third, we use geom_col to draw bar graph of average BMI across age groups. 
+- Fourth, we use geom_errorbar to make the plot of errorbars. 
+  + In this stage, we tell R, the min value of y variable that is BMI for errorbar is equal to mean minus sem (ymin = mean - sem). 
+  + Also, the max value of y for error bar is equal to mean + sem.
+  + mean +/- sem is the formula for the confidence intervals. 
+
+## Error Bar
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>%
+  group_by(Race1) %>%
+  summarize(mean= mean(BMI),
+            sem = std.error(BMI)) %>%
+  
+  ggplot(aes(x=Race1, y=mean)) +
+  
+  geom_col(fill="NA",
+            size=1, color="red") +
+  
+  geom_errorbar(aes(ymin=mean-sem,
+                    ymax=mean+sem), 
+                color=c("blue")) +
+  theme_classic()
+
+
+#line and errorbars
+NHANES %>%
+  group_by(Race1) %>%
+  summarize(mean= mean(BMI),
+            sem = std.error(BMI)) %>%
+  
+  ggplot(aes(x=Race1, y=mean)) +
+  
+  geom_line( color="red", group=1) +
+  
+  geom_errorbar(aes(ymin=mean-sem,
+                    ymax=mean+sem), 
+                color=c("blue")) +
+  theme_classic()
+
+#ribbon
+NHANES %>%
+  group_by(Race1) %>%
+  summarize(mean= mean(BMI),
+            sem = std.error(BMI)) %>%
+  
+  ggplot(aes(x=Race1, y=mean)) +
+  geom_line( color="red", group=1) +
+  geom_ribbon(aes(ymin=mean-1.96*sem,
+                    ymax=mean+1.96*sem), 
+                color=c("blue"), fill="blue",alpha=0.1, group=1) +
+  theme_classic()
+```
+
+## Heat Map 
+
+- using ggplot geom_tile or geom_raster we can also make a heat map. 
+- Here we plot the heat map of average BMI. 
+- The two categorical variables used for making the heat map are Race1 and Gender. 
+
+## Heat Map
+
+We have to use dplyr to make the plot below: 
+
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>%
+  group_by(Race1, Gender) %>%
+  summarize(mean_BMI= mean(BMI)) %>%
+  ggplot(aes(x= Race1, y=Gender)) +
+  geom_tile(aes(fill=mean_BMI), color="white") +
+  geom_label(aes(label=round(mean_BMI,digits = 1)))
+
+ 
+```
+
+
+## Labels, title, legend and themes 
+
+- A plot should speak all by itself. 
+- So if we see a graph with no text around it, using the title, legend and labels colors or shapes we have to be able to understand what the plot is about. 
+
+## Plot titles and axis titles
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=BMI, y= total_chol )) +
+  geom_point(color="black", size=2, shape=1, alpha=0.5) +
+  
+  
+  labs(
+    title = "BMI and Cholestrol ",
+       y= "Total Cholesterol ", 
+       x="BMI"
+    )
+```
+
+## Plot titles and axis titles
+
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=BMI, y= total_chol )) +
+  geom_point(color="black", size=2, shape=1, alpha=0.5) +
+  
+  
+  labs(title = "Scatterplots of BMI and Cholestrol ",
+       subtitle = "United States of America",
+       x="BMI", 
+       y="Cholestrol") 
+```
+
+
+## Plot titles and axis titles, adjusting size, position, and colors of the titles
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=BMI, y= total_chol )) +
+  geom_point(color="black", size=2, shape=1, alpha=0.5) +
+  
+  
+  labs(title = "Scatterplots of BMI and Cholestrol ",
+       subtitle = "United States of America",
+       x="BMI", 
+       y="Cholestrol") +
+  
+  
+  theme(plot.title = element_text(hjust = 0.5,colour = "green",face = "italic", size=40),
+        plot.subtitle = element_text(hjust = 0.9), 
+        axis.title.x  = element_text(size = 40, color = "red"),
+        axis.title.y  = element_text(size = 18, color = "blue"))
+```
+
+
+## Increasing the number of ticks (breaks)
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>% # Stage 1
+  ggplot(aes(x=BMI, y= total_chol )) + #Stage 2
+  geom_point(color="black", size=2, shape=1, alpha=0.5) +
+  
+  
+  labs(title = "Scatterplots of BMI and Cholestrol ", 
+       subtitle = "United States of America",
+       x="BMI", 
+       y="Cholestrol") + #Stage 3
+  
+  
+  theme(plot.title = element_text(hjust = 0.5),
+        plot.subtitle = element_text(hjust = 0.9), 
+        axis.title.x  = element_text(size = 40, color = "red"),
+        axis.title.y  = element_text(size = 18, color = "blue")) + # Stage4 
+  
+  
+  scale_x_continuous(breaks = scales::pretty_breaks(10)) +
+  scale_y_continuous(breaks = scales::pretty_breaks(10)) # Stage 5
+```
+
+## Change legend title and its components
+
+There are situations that we need to define the legends labels manually and this can be done in ggplot by scale_color_discrete function. So below we have told R to make a jitter plot and use the education level to color the points. so we can use scale_color_discrete. If we had used fill=factor(Race1) we should use scale_color_discrete. In scale_color_discrete we name="Title" is used to determine the legend's title. and labels = c("A", "B") for the name of each legend level.  
+
+## Change legend title and its components
+
+```{r,echo=TRUE,tidy=TRUE}
+
+NHANES %>%
+  ggplot(aes(x=factor(Race1), y=BMI)) +
+  geom_violin(fill="NA", color="blue") +
+  geom_jitter(aes(color=factor(Race1))) +
+  
+  
+  labs(title = "Violin and Jitter Plots of BMI\nacrss Races",
+       y= "BMI",
+       x="Race") +
+  
+  
+  scale_color_discrete(name = "Race", labels= c("Race1 : BLACK", "Race Group 2: HiSpAnIc", 
+                                                "Mexican", "WHITE", "Do not Know")) 
+  
+```
+
+```{r,include=T}
+
+NHANES %>%
+  ggplot(aes(x=Gender, y=BMI)) +
+  geom_violin() +
+  geom_jitter(aes(color=Gender)) +
+  coord_flip() +
+  
+  labs(title = "Violin and Jitter Plots of BMI\nacross Races",
+       y= "BMI",
+       x="Race") +
+  
+  scale_color_manual(values = c("orange", "green"),labels= c("Female","MALE")) 
+
+#  scale_color_tableau()
+  
+  
+```
+
+
+##GGRIDGES
+
+```{r,message=F,warning=F,echo=T}
+library(ggridges)
+NHANES %>%
+  ggplot(aes(total_chol,Race1, fill=stat(x))) +
+  geom_point() +
+  geom_density_ridges_gradient(quantile_line=T) +
+  scale_fill_continuous_tableau() 
+  
+
+  
+  
+```
+
+
+
+
+# Exploratory Data Analysis (EDA)
+
+
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+library(tidyverse)
+library(haven)
+library(htmltools)
+library(readr)
+library(readxl)
+library(tinytex)
+```
+
+## Exploratory Data Analysis (EDA)
+
+- EDA is a process in which we try to have a better understanding of the data. In EDA:  
+  1. start raising a question about the data.
+  2. try to answer the question by depicting plots, transforming the data and modelling. 
+  3. use the results in the second step, to ask a new question. 
+  4. get back to the second step to answer the new question raised in third step using data visualization, data transformation and modelling. 
+
+## EDA: Question
+- if we do not know too much about the data we can start to ask questions about: 
+  1. variation of the variables.
+  2. co-variation of the variables.
+
+## Variation: 
+- the first measure of variation of a variable is its distribution. 
+- we can use histogram for the continuous variables
+  + histogram: divides a variable into equal bins (distances) and shows the number of observations in each bin. 
+  + in ggplot we can also set binwidth. 
+  + we can use freqploy for the continuous variables. 
+  + freqpoly graph is the same as histogram but instead of bars we have a line.   + geom_freqpoly is useful when we want to examine the distribution of several variables in the same time. 
+  
+## Variation: 
+  
+- we can use density and violin plots for the continuous variables
+- we can use bar graph for the categorical variable. 
+
+## So what? 
+- so far we went through the step one and step two of EDA. 
+  + we first asked a question about the variation of a variable
+  + then we used our visualization tool (histogram)
+- at the third step we ask new questions: 
+  + using the height of the histogram we can identify the more common values (longer bars), less common values (shorter bars), values at the very end of the tail.
+  + note that we should change the number of bins or binwidth for a more comprehensive examination. 
+  + this will allow us to identify the outliers. 
+  + if you could identify any outliers simply replace them with missing values (NA) using ifelse function. 
+
+## Covariation
+- in the case of two continuous variables we can use scatterplot 
+- in the case of a categorical and a continuous variable we can use:
+  + line graph
+  + column graph
+  + box plot that is highly informative
+  + error bar
+- in the case of two categorical variables we can use count plot and raster plot. 
+
+## so what? 
+
+- examining the covariation between two variables we will be able to collect information about:
+  + whether there is a relationship between two variables
+  + whether the relationship between two variables changes at different levels of both variables
+- finally, we will be able to specify a better model. 
+
+## Models 
+
+- in the EDA we can also use simple models to investigate the covariations between the variables
+- Famous statistician George Box (1976) said: "All models are wrong, but some are useful".
+- Box (2009): "All models are approximations. Assumptions, whether implied or clearly stated, are never exactly true. **All models are wrong, but some models are useful**. So the question you need to ask is not **"Is the model true?" (it never is) but "Is the model good enough for this particular application?"**
+- examining the variation and covariation we can specify more useful models. 
+- models provides scientific facts about the relationships between variables of interests. 
+- modelr package and broom package are really handy for combining both scientific results (models) and visualization tools. 
+
+## Case study 1: sensor data 
+- in the field of animal science specially in the case of the dairy cows, conditions affecting the probability of a successful pregnancy are studied extensively because cows can produce milk after giving birth. In other words, dairy cows are supposed to give birth to one calf each year for continuous milk production. 
+- in many cases artificial insemination is used to increase the probability of pregnancy. Thus, researchers look for a series of signs showing that it is a good time for artificial insemination. 
+- the previous studies showed increasing in the number of steps (movement) is one of these signs. Therefore, they use sensors to track the level of activities for dairy cows. 
+- the previous studies showed heat stress defined as changes in body temperature above a point because of higher levels of temperature or humidity reduces the change of successful pregnancy. 
+- so here we use a dataset that includes several interesting information about dairy cows. The dataset includes information related to the level of activities (measured by sensors), body temperature, temperature humidity index (THI), the amount of milk production and whether an artificial insemination led to pregnancy or not? 
+- given the information above, we are going to conduct EDA for this dataset
+- I have listed the definition of different variables below. 
+```{r, warning=F,message=FALSE,tidy=TRUE,eval=FALSE}
+library(readr)
+library(readxl)
+Definition_Main_Activity <- readxl::read_xlsx("/Users/shh/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/Dairy/DefinitionMainActivity.xlsx")
+library(DT)
+
+```
+
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# import data
+main <- read_csv("/Users/shh/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/Dairy/MainActivity.csv")
+# making a tidy dataset 
+main_tidy <- main %>%
+  select(id = ID,
+         lactation=Lact,
+         parity = Parity, body_condition=BCS,
+         days_in_milk= DIM,
+         raw_duration= RawDurat,
+         duration = Durat, 
+         peak= Peak, 
+         activity_bou= ActBou,
+         body_condition = BCS,
+         body_temp = Btemp, 
+         temp_humidity_index = THI, 
+         estrus= Estrus, 
+         bred = Bred, 
+         pregnant = Preg,
+         milk_production=Milk
+         )
+glimpse(main_tidy)
+```
+
+## Variation 
+
+
+
+```{r}
+
+main_tidy <- main_tidy %>%
+  mutate(
+         lactation=as.factor(lactation),
+         parity = as.factor(parity), 
+         body_condition=as.numeric(body_condition),
+         days_in_milk= as.numeric(days_in_milk),
+         raw_duration= as.numeric(raw_duration),
+         duration = as.numeric(duration), 
+         peak= as.numeric(peak), 
+         activity_bou= as.numeric(activity_bou), 
+         body_temp = as.numeric(body_temp), 
+         temp_humidity_index = as.numeric(temp_humidity_index), 
+         estrus= as.factor(estrus), 
+         bred = as.factor(bred), 
+         pregnant = as.factor(pregnant),
+         milk_production=as.numeric(milk_production),
+         id=as.integer(id))
+
+glimpse(main_tidy)
+```
+
+
+## Variation 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# before making plots it is good idea to explore data usuing count() function 
+library(scales)
+
+
+main_tidy %>%
+  group_by(id) %>%
+  count(id)
+
+# there are 345 animals in our data. e.g there are 5 events for the animal with id =2
+
+main_tidy %>%
+  group_by(id) %>%
+  dplyr::summarise(n= n()) %>%
+  ggplot(aes(n)) + 
+  geom_histogram(bins = 34, color="blue", fill="NA") +
+  scale_x_continuous(breaks = scales::pretty_breaks(10))
+# rule of thumb : number of bins = square root of the number of observation.
+# we have 1160 obs so the number of bins is approximately = 34. 
+# about 70 animals had only one episode. Most of them had 2 to 5 episodes. 
+
+```
+
+## histogram: body_temp
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+main_tidy %>%
+  ggplot(aes(body_temp)) +
+  geom_histogram(bins = 34, color="red", fill="steelblue") +
+    scale_x_continuous(breaks = scales::pretty_breaks(15))
+
+
+
+
+# we can see that there are few observations with body temperature of above 41.5. we can consider them as outliers and substitute them with a NA as follows: 
+
+main_tidy <- main_tidy %>%
+  mutate(body_temp_1 = ifelse(body_temp>41.5, NA, body_temp)) 
+# here I make a variable called body_temp_1. if body_temp>41.5 replace the value by NA, otherwise by body_temp). 
+# in ifelse we say if a condition is true in a column, replace the row(s) with what we specify first, otherwise replace with another thin that we specify next. 
+
+# ifelse(this condition is true, replace it with this, otherwise replace it with that)
+# using body_temp if body_temp>41.5, replace body_temp with NA, otherwise replace it with values of body_temp variable. 
+main_tidy %>%
+  ggplot(aes(body_temp_1)) +
+  geom_histogram(bins = 34, color="blue")
+
+# most of the observations are between 38.2 to 39. 
+
+```
+## histogram: temp_humidity index 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+main_tidy %>%
+  ggplot(aes(temp_humidity_index)) +
+  geom_histogram(bins=34, color="white") +
+  scale_x_continuous(breaks = scales::pretty_breaks(34))
+
+
+main_tidy %>%
+  ggplot(aes(temp_humidity_index)) +
+  geom_freqpoly(bins = 34, color="red") +
+    scale_x_continuous(breaks = scales::pretty_breaks(34))
+
+
+# outliers were identified and replaced by NA
+main_tidy <- main_tidy %>%
+  mutate(temp_humidity_index_1 = ifelse(temp_humidity_index>80, NA, temp_humidity_index)) 
+
+
+main_tidy %>%
+  ggplot(aes(temp_humidity_index_1)) +
+  geom_freqpoly(bins = 34, color="red")
+```
+
+## histogram: activity_bou
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+main_tidy %>%
+  ggplot(aes(activity_bou)) +
+  geom_histogram(position = "stack",color="black", bins = 34) 
+
+# most of the observations are between 150-400. There are several observations with very hight activity records (above 550)
+
+
+```
+
+
+## covariaion: body_temp and temp_humidity_index 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+main_tidy %>%
+  ggplot(aes(x=temp_humidity_index_1, y= body_temp_1)) +
+  geom_point(alpha=0.2) +
+  geom_smooth(method = "loess") +
+  geom_vline(xintercept = 66)
+# there is a kink in the temp_humidity index of around 66? 
+# so does it mean if index goes above 66, it is more likely that an animal will have heat stress?  
+
+# we can also use cut_interval to explore the association between these two variables using 
+
+main_tidy %>%
+  ggplot(aes(x=temp_humidity_index_1, y= body_temp_1)) +
+  geom_boxplot(aes(fill=cut_interval(temp_humidity_index_1, 30))) +
+  theme(legend.position = "none")  # we do not want to see the legends.
+
+# in here we can also observe a shift in the median of body_temp. 
+```
+
+## covariation activity_bou and temp_humidity_index 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+main_tidy %>%
+  ggplot(aes(x=temp_humidity_index_1, y=activity_bou)) +
+  geom_point(alpha=0.2) +
+  geom_smooth(method = "loess") +
+  geom_vline(xintercept = 66)
+# in general there is negative association between the temp_humidity_index and activity levels of animals.  
+# there is also a kink at the temp_humidity_index of around 66? 
+# so does it mean if index goes above 66, it is more likely that an animal activity goes down? 
+# we can also use cut_interval to explore the association between these two variables in a boxplot
+
+main_tidy %>%
+  ggplot(aes(x=temp_humidity_index_1, y=activity_bou)) +
+  geom_boxplot(aes(color=cut_interval(temp_humidity_index_1, 30))) +
+  theme(legend.position = "none")  # we do not want to see the legends.
+
+## boxplot points at temp_humidity_index value of 69. After temp_humidity_index = 69, the median of activity_bou values are significantly lower.  
+```
+
+## covariation: does the body_condition_score play an important role in determining the association between body_temp and temp_humidity_index? 
+
+```{r,echo=T,warning=F,message=FALSE}
+main_tidy %>%
+  filter(temp_humidity_index_1 !="NA", body_temp_1 !="NA", body_condition !="NA") %>%
+  ggplot(aes(x=temp_humidity_index_1, y= body_temp_1)) +
+  geom_point(alpha=0.4) +
+  geom_smooth(method = "loess", se=F) +
+  facet_wrap( ~cut_number(as.numeric(body_condition),3))
+
+# so apparently the association between body_temp and temp_humidity_index is faded out for animals with higher weights? 
+# does it mean, animals with higher weights are less likely to have heat stress? 
+```
+
+## covariation: activity and estrus? 
+- Estrus is a condition during which dairy cows are ready for pregnancy. 
+- Estrus variable in the dataset includes 3 levels of weak (wk), moderate (mod) and strong (stg). 
+- the levels are calculated based on observing a set of body conditions.
+- here we would like to see whether the activity levels (activity_bou) are different across estrus categories. 
+- the boxplots shows those dairy cows with body conditions pointing at strong estrus signs have also higher levels of activities. 
+
+```{r,echo=T,warning=F,message=FALSE}
+# I first make a new variable called estrus_ord that is ordered estrus. It is equal to 1 if estrus is Wk, 2, if estrus is Mod and 3 if estrus is Stg 
+main_tidy <- main_tidy %>%
+  mutate(estrus_ord = ifelse(estrus=="Wk", 1, ifelse(estrus=="Mod", 2,3)))
+main_tidy %>%
+  ggplot(aes(x=estrus_ord, activity_bou)) +
+  geom_boxplot(aes(fill = estrus)) +
+  coord_flip()
+
+# it seems that the median of activity levels of animals with strong estrus signs are higher than two other group. The same pattern can be observed comparing moderate and week categories. 
+```
+
+## breeding, activity
+
+```{r,echo=T,warning=F,message=FALSE, tidy=T}
+
+main_tidy %>%
+  filter(days_in_milk>60) %>%
+  ggplot(aes(y=factor(estrus_ord), x=factor(bred))) +
+  geom_tile(aes(fill=(activity_bou)), color="black") +
+  geom_label(aes(label=(activity_bou))) +
+  scale_fill_distiller(palette = 8,direction = 2) 
+# it seems that activity level did not play important role in AI except in the case strong estrus status
+```
+
+## breeding, activity
+```{r,echo=T,warning=F,message=FALSE}
+library(plotrix)
+main_tidy %>%
+    filter(days_in_milk>60) %>%
+  group_by(estrus_ord, bred) %>%
+  summarise_at(vars(activity_bou, body_temp_1 ), lst(mean, std.error),na.rm =T )  %>%
+  ggplot(aes(factor(estrus_ord), activity_bou_mean)) +
+  geom_line(group=1) + 
+  geom_errorbar(aes(ymin=(activity_bou_mean-1.96*activity_bou_std.error), ymax=(activity_bou_mean + 1.96*activity_bou_std.error)), color="blue") +
+  facet_wrap(~bred)
+
+# a better approach
+
+library(plotrix)
+main_tidy %>%
+    filter(days_in_milk>60) %>%
+  group_by(estrus_ord, bred) %>%
+  summarise_at(vars(activity_bou, body_temp_1 ), lst(mean, std.error),na.rm =T )  %>%
+  ggplot(aes(factor(bred), activity_bou_mean)) +
+  geom_line(group=1) + 
+  geom_errorbar(aes(ymin=(activity_bou_mean-1.96*activity_bou_std.error), ymax=(activity_bou_mean + 1.96*activity_bou_std.error)), color="blue") +
+  facet_wrap(~estrus_ord)
+  
+```
+
+
+```{r}
+main_tidy %>%
+  filter(temp_humidity_index_1 !="NA", body_temp_1 !="NA", body_condition !="NA", days_in_milk>60) %>%
+  group_by(bred, estrus_ord) %>%
+  count()
+
+main_tidy %>%
+  filter(temp_humidity_index_1 !="NA", body_temp_1 !="NA", body_condition !="NA", days_in_milk>60) %>%
+  ggplot(aes(x=bred, y= activity_bou)) +
+  geom_boxplot(aes(group=bred, fill=bred)) +
+  facet_wrap(~estrus_ord) 
+  #facet_wrap( ~cut_number(as.numeric(body_condition),3))
+
+
+
+```
+
+
+
+## breeding, body_temp
+```{r,echo=T,warning=F,message=FALSE}
+library(plotrix)
+main_tidy %>%
+  group_by(estrus_ord, bred) %>%
+  summarise_at(vars(activity_bou, body_temp_1 ), lst(mean, std.error),na.rm =T )  %>%
+  ggplot(aes(factor(bred), body_temp_1_mean)) +
+  geom_line(group=1) + 
+  geom_errorbar(aes(ymin=(body_temp_1_mean-1.96*body_temp_1_std.error), ymax=(body_temp_1_mean + 1.96*body_temp_1_std.error)), color="blue") +
+  facet_wrap(~estrus_ord)
+
+# also body temp does not seem to be an important factor in AI decision. 
+  
+```
+
+## pregnancy, breeding
+
+```{r}
+main_tidy %>%
+  group_by(bred, pregnant) %>%
+  summarise(n = n()) %>%
+  mutate(proportion = 100*n/sum(n))
+```
+
+
+## pregnancy, activity
+
+- if AI was not performed, then pregnancy variable is filled with "."
+```{r,echo=T,warning=F,message=FALSE}
+
+
+main_tidy %>%
+  filter(bred==1) %>%
+  group_by(bred, pregnant) %>%
+  summarise(n= n()) %>%
+  mutate(proportion =100* n/sum(n))
+
+```
+
+
+
+## pregnancy, activity
+```{r,echo=T,warning=F,message=FALSE}
+library(plotrix)
+main_tidy %>%
+  filter(bred == 1) %>%
+  group_by(estrus_ord, pregnant) %>%
+  summarise_at(vars(activity_bou, body_temp_1 ), lst(mean, std.error),na.rm =T )  %>%
+  ggplot(aes(factor(pregnant), activity_bou_mean)) +
+  geom_line(group=1) + 
+  geom_errorbar(aes(ymin=(activity_bou_mean-1.96*activity_bou_std.error), ymax=(activity_bou_mean + 1.96*activity_bou_std.error)), color="blue") +
+  facet_wrap(~estrus_ord)
+  
+```
+
+
+
+## pregnancy, body temp
+
+```{r,echo=T,warning=F,message=FALSE}
+library(plotrix)
+main_tidy %>%
+  filter(bred == 1) %>%
+  group_by(estrus_ord, pregnant) %>%
+  summarise_at(vars(activity_bou, body_temp_1 ), lst(mean, std.error),na.rm =T )  %>%
+  ggplot(aes(factor(pregnant), body_temp_1_mean)) +
+  geom_line(group=1) + 
+  geom_errorbar(aes(ymin=(body_temp_1_mean-1.96*body_temp_1_std.error), ymax=(body_temp_1_mean + 1.96*body_temp_1_std.error)), color="blue") +
+  facet_wrap(~estrus_ord)
+  
+## instead of using body temp in continuous form we can use the cut_interval
+```
+
+
+## pregnancy, milk production
+
+```{r,echo=T,warning=F,message=FALSE}
+library(plotrix)
+main_tidy %>%
+  filter(bred == 1) %>%
+  group_by(estrus_ord, pregnant) %>%
+  summarise_at(vars(activity_bou, body_temp_1, milk_production,  ), lst(mean, std.error),na.rm =T )  %>%
+  ggplot(aes(factor(pregnant), milk_production_mean)) +
+  geom_line(group=1) + 
+  geom_errorbar(aes(ymin=(milk_production_mean-1.96*milk_production_std.error), ymax=(milk_production_mean + 1.96*milk_production_std.error)), color="blue") +
+  facet_wrap(~estrus_ord)
+  
+```
+## what would be a good model to predict pregnancy of dairy cows?
+
+```{r,echo=T,warning=F,message=FALSE}
+
+
+
+```
+
+
+## Case study 2 
+
+- In here I work with National Health and Nutrition Examination Survey (NHANES)
+- the dataset including four files is released every year. 
+- the files in the dataset are:
+  + demographic data
+  + dietary data
+  + examination data
+  + laboratory data
+- I here import two datasets that are demographic and an a dataset related to the measure of total cholesterol (chol hereafter) from a webpage.
+- this can be done using package haven.
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+demographic <- read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.XPT")
+lab_chol_total <- read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/TCHOL_I.XPT")
+```
+
+## some information about chol
+- in the case of total chol levels for adults:
+  + optimal level for total chol: below 200 milligrams per deciliter (mg/dL) 
+  + borderline level of chol: 200 mg/dL =< chol =< 239 mg/dL  
+  + high: chol> 240 mg/dL .
+
+## data: join and tidy
+
+- Join 
+  + in here we use left join where the left table is demographic
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+joined <- left_join(demographic, lab_chol_total, by="SEQN")
+```
+
+## data: join and tidy, cont.
+
+- tidy the data: filter and select 
+  + we intend to keep only a set of variables (select from dplyr)
+  + we are also only interested in adults (filter from dplyr)
+  + we do not want to 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+
+df <- joined %>%
+  select(
+    SEQN, 
+    gender= RIAGENDR,
+    age= RIDAGEYR,
+    race=RIDRETH3,
+    foreign_born=DMDBORN4,
+    education=DMDEDUC2,
+    poverty_ratio= INDFMPIR,
+    total_chol= LBXTC
+    ) %>%
+  filter(total_chol != "NA", 
+         age>18)
+         
+```
+
+## data: join and tidy, cont. 
+
+- tidy the data: change the name of categories 
+  + there is a very handy function in forcats (a part of tidyverse)  called fct_recode that we can use to rename the observations in categorical variables. 
+  + note that fct_recode should be used inside the mutate. 
+- in the dataset called df we have several categorical variable including 
+  + gender: male=1, female=2. 
+  + race: Mexican American=1, Hispanic=2, white=3, black=4, Asian=6,others=7, code 5 is not used.  
+  + foreign_born:USA=1, foreign=2. 
+  + education: less than 9th grade education = 1, 9-11th grade education (includes 12th grade and no diploma) =2, High school graduate/GED = 3, some college or associates (AA) degree= 4, and college graduate or higher= 5. 
+  
+## data: join and tidy, cont. 
+- here is how we use recode: 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+df <- as_tibble(df) # I declared df to be a tibble for better representation and also I will be able to see the data type. 
+df # here I saw that gender is stored as double and I want to changed it as factor. 
+df$gender <- as.factor(df$gender) # here I changed the gender to a factor variable. 
+df$foreign_born <- as.factor(df$foreign_born)
+df$race <- as.factor(df$race)
+df$education <- as.factor(df$education)
+
+
+df_recode <- df %>%
+  mutate( gender = fct_recode(gender, Male= "1", Female= "2"),
+          race = fct_recode(race, Mexican= "1", Hispanic= "2", White="3", Blakc="4", Asian="6", Other="7"), 
+          foreign_born = fct_recode(foreign_born, USA_Born= "1", Foreign_Born="2"), 
+          education = fct_recode(education, No_College_Degree = "1",
+                                 No_College_Degree = "2",
+                                 No_College_Degree = "3",
+                                 No_College_Degree = "4",
+                                 College_Degree = "5")
+  )
+          
+  
+ df_recode         
+```
+
+## EDA 
+- now we have a rather tidy data to work with 
+- we first start with variation 
+
+## EDA: Variation of chol level 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# number of bins:
+sqrt(5086)
+df_recode %>%
+  ggplot(aes(x= total_chol)) +
+  geom_histogram(bins=71, color="red")
+
+
+# so we have very high chol level at  the very end of histogram
+# it seems that these are mistakes in the data collection or outliers 
+# we replace them with NA
+
+
+```
+
+## EDA: Variation of chol level 
+
+
+  
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+# so we simply replace these with NA as follows: 
+
+df_recode <- df_recode %>%
+  mutate(total_chol_f = ifelse(total_chol<375, total_chol, NA)) 
+# we use ifelse function ifelse has very simple structure so above I tell R to use ifelse function, inside the function first I provide a logical condition. That is total_chol level is smaller than 375. If this is the case, the variable total_chol_level in the mutate function will be equal to the value of total_chol. However if total_chol<375 is not true the value of total_chol_f will be NA (missing). 
+
+# then again I plot the histogram. 
+df_recode %>%
+  ggplot(aes(x= total_chol_f)) +
+  geom_histogram(bins = 71, color="green")
+```
+  
+
+## EDA: Variation of chol level 
+- so it seems that chol level is distributed almost normally (histogram is skewed to the right a bit) 
+
+- we can also see the variation across different groups using freqpoly 
+  + so it seems that the number of females with 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+
+df_recode %>%
+  filter(foreign_born != 99) %>%
+  ggplot(aes(x= total_chol_f)) +
+  geom_freqpoly(aes(color=gender), bins=71, size=2) +
+  geom_vline(xintercept=c(200, 240))
+
+```
+
+
+
+## EDA: Variation of poverty_ratio
+- the poverty_ratio is a verifiable measuring the income status of a household relative to the the income levels below which individuals are said to be poor. so if poverty_ration is less than one, it means they live in a poor household. 
+
+- the histogram shows a considerable number of respondents have poverty_ratio measure of above five implying they are far away from what is defined as being poor. 
+
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+
+df_recode %>%
+  ggplot(aes(x= poverty_ratio)) +
+  geom_histogram(bins=71, color="red")
+
+
+```
+
+## EDA: Variation of poverty_ratio: 5 intervals
+
+- so considering the distribution of poverty_ratio it seems that if we want to introduce this variable into a model as an independent variable we should make a categorical variable out of it. 
+-  the functions called cut_width, cut_number and cut_interval can turn a continuous variable into the categorical variable. 
+
+- below I plot the histogram of poverty_ratio, however I asked R to make 5 plots for me using facet_wrap(~ cut_interval(poverty_ratio, 5), scales = "free"). Here I say make 5 plots. each plot is different than other based the interval of poverty_ratio. cut_interval(poverty_ratio, 5) means cut the poverty_ratio variable into 5 equal **intervals**. **cut_number** makes 5 groups with similar number of observations. 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+
+df_recode %>%
+  filter(poverty_ratio != "NA") %>%
+  ggplot(aes(x= poverty_ratio)) +
+  geom_histogram(bins = 71, color="blue") +
+  facet_wrap(~ cut_interval(poverty_ratio, 5), scales = "free")
+
+
+
+```
+
+## EDA: Variation of poverty_ratio: 5 intervals, count them. 
+
+- so here I also want to see how many individuals are in each groups. 
+- I can use count function.
+- the number of individuals in the 3rd and 4th groups are less than other. 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+
+df_recode %>%
+  filter(poverty_ratio != "NA") %>%
+   mutate(interval5 = cut_interval(poverty_ratio, 5)) %>%
+  group_by(interval5) %>%
+  count()
+
+
+
+```
+
+
+- so, probably a better cut strategy would be the use of smaller cut_number. This time I use 4 groups. 
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+
+df_recode %>%
+  filter(poverty_ratio != "NA") %>%
+  ggplot(aes(x= poverty_ratio)) +
+  geom_histogram(bins = 71, color="red") +
+  facet_wrap(~ cut_number(poverty_ratio, 4), scales = "free") 
+
+
+
+```
+
+
+```{r, echo=TRUE, warning=F,tidy=TRUE, tidy.opts=list(width.cutoff=60)}
+
+df_recode %>%
+  filter(poverty_ratio != "NA") %>%
+   mutate(number4 = cut_number(poverty_ratio, 4)) %>%
+  group_by(number4) %>%
+  count()
+
+```
+
+
+## EDA: covariation of total_chol and poverty ration
+
+```{r}
+df_recode %>%
+  filter(total_chol_f !="NA", poverty_ratio !="NA") %>%
+  ggplot(aes(x=cut_number(poverty_ratio,4), y=total_chol_f)) +
+  geom_boxplot( aes(fill=cut_number(poverty_ratio,4))) +
+  coord_flip()
+```
+
+## EDA: covariation of total_chol and age
+
+- in the case of two continuous variables in the datasets that are age and total_chol we use scatterplot and prediction lines.
+- the figure below suggests an evidence of non-linear association between age and total cholesterol. 
+ 
+```{r, echo=T, warning=F, message=F}
+df_recode %>%
+  ggplot(aes(x= age, y=total_chol_f)) +
+  geom_point(alpha=0.2) +
+  geom_smooth(se=F,method = "loess", color="red") 
+
+
+
+```
+
+
+
+
+
+# Modelling 
+
+
+
+
+```{r, message=FALSE, include=FALSE, warning=F, message=F}
+library(tidyverse)
+library(tidymodels)
+library(readr)
+library(NHANES)
+library(rsample)
+library(recipes)
+library(knitr)
+
+```
+
+
+## Data
+```{r echo=TRUE, warning=F}
+library(readr)
+library(haven)
+
+demographic <- read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.XPT")
+lab_chol_total <- read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/TCHOL_I.XPT")
+body_condition <- read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.XPT")
+
+# join 
+
+joined <- left_join(demographic, lab_chol_total, by="SEQN")
+joined_1 <- left_join(joined, body_condition, by="SEQN")
+# select 
+df <- joined_1 %>%
+  dplyr::select(
+    SEQN, 
+    gender= RIAGENDR,
+    age= RIDAGEYR,
+    race=RIDRETH3,
+    foreign_born=DMDBORN4,
+    education=DMDEDUC2,
+    poverty_ratio= INDFMPIR,
+    total_chol= LBXTC, 
+    BMI = BMXBMI, 
+    WC = BMXWAIST
+    ) %>%
+  filter(total_chol != "NA", 
+         age>18, age<71)
+
+#recoding 
+
+
+nh <- df %>%
+  mutate(obese = ifelse(BMI>29, "Yes", "No"),
+    gender = as.factor(gender), 
+    race = as.factor(race), 
+    foreign_born = as.factor(foreign_born), 
+    education = as.factor(education),
+    gender = fct_recode(gender, Male= "1", Female= "2"),
+    race = fct_recode(race, Mexican= "1", Hispanic= "2", White="3", Blakc="4", Asian="6", Other="7"), 
+    foreign_born = fct_recode(foreign_born, USA_Born= "1", Foreign_Born="2"),
+    education = fct_recode(education, 
+                                 No_College_Degree = "1",
+                                 No_College_Degree = "2",
+                                 No_College_Degree = "3",
+                                 No_College_Degree = "4",
+                                 College_Degree = "5")) %>%
+  na.omit()
+
+
+# import data
+main <- read_csv("/Users/shh/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/Dairy/MainActivity.csv")
+# making a tidy dataset 
+
+main_tidy <- main %>%
+  dplyr::select(id = ID,
+         lactation=Lact,
+         parity = Parity, body_condition=BCS,
+         days_in_milk= DIM,
+         raw_duration= RawDurat,
+         duration = Durat, 
+         peak= Peak, 
+         activity_bou= ActBou,
+         body_condition = BCS,
+         body_temp = Btemp, 
+         temp_humidity_index = THI, 
+         estrus= Estrus, 
+         bred = Bred, 
+         pregnant = Preg,
+         milk_production=Milk
+         )
+main_tidy <- main_tidy %>%
+  mutate(
+         lactation=as.factor(lactation),
+         parity = as.factor(parity), 
+         body_condition=as.numeric(body_condition),
+         days_in_milk= as.numeric(days_in_milk),
+         raw_duration= as.numeric(raw_duration),
+         duration = as.numeric(duration), 
+         peak= as.numeric(peak), 
+         activity_bou= as.numeric(activity_bou), 
+         body_temp = as.numeric(body_temp), 
+         temp_humidity_index = as.numeric(temp_humidity_index), 
+         estrus= as.factor(estrus), 
+         bred = as.factor(bred), 
+         pregnant = as.factor(pregnant),
+         milk_production=as.numeric(milk_production),
+         id=as.integer(id))
+library(rsa)
+
+```
+
+
+
+## The curse of being open source
+
+- When it comes to modelling, R becomes confusing.
+- It is due to the presence of many many packages that do the same thing in different ways for modeling.
+- In many cases the variables of a datasets are not properly stored for modelling. Therefore, we need to preprocess the datasets and make them ready for estimation. 
+- Similar to tidyverse, people in RStudio recently released a new package called **tidymodels**.
+
+## examples 
+
+- if you want to conduct a regression analysis in R, you could use a series of packages and their functions such as lm() (stands for linear model), glmnet (ridge and lasso regressions), keras (deep learning and other forms of regression analysis)
+
+- if you want to conduct a logistic regression, you could use glm, glmnet, keras etc. 
+
+- however, all of these packages use different expressions or methods to fit a model.
+
+- Therefore, tidmodels could be highly useful. 
+- In this session, I only focus on a linear and logistic regression and later on will show the application of tidymodels for decision-tree and randomforest models. 
+
+## example cont.
+
+```{r}
+
+#linear regression 
+library(coefplot)
+library(broom)
+glimpse(nh)
+
+    #age,age^2, foreign born, BMI,BMI^2,race
+
+lm_test <- lm(formula = BMI ~ age + gender + race, data=nh)
+
+summary(lm_test)
+
+coefplot::coefplot.default(model = lm_test,intercept = F)
+
+# logistic regression 
+
+glm_test <-  glm(as.factor(obese) ~ age + gender + race , family = "binomial", data=nh)
+
+summary(glm_test)
+
+coefplot::coefplot.default(model = glm_test,intercept = F)
+
+
+
+```
+
+
+## Tidymodels 
+
+- Tidymodels includes packages such as ggplot2, dplyr, rsample, recipes, broom, yardstick and parsnip. 
+- This lecture covers some of the important features of four packages that are: recipes, parsnip, yardstick and rsample. 
+
+- So, if we want to put them in order:
+  + we could start with recipe pkg to prepare the datasets required for modeling. 
+  + then, we can use rsample to make training and testing sets or even for CV. 
+  + then we can use parsnip for modeling
+  + finally, we can use yardstick to evaluate the model performance. 
+
+## Tidymodels: Recipes
+
+- The purpose of recipes package is to create a datasets that is proper for use in modelling. It is also called pre-processing. 
+- Recipes package is designed based on the concept of recipes for cooking. 
+- Let's assume you are going to bake a cake: you need a recipe, you should prepare the recipe's items and finally you bake the cake. 
+- In recipes the cake is the dataset that can be used for analysis. 
+
+## Tidymodels: Recipes
+
+- Two types of information are provided in a recipe:
+  + Ingredients.
+  + The orders of ingredients processing (which ingredients should be added first and which one next)
+- Similarly in the recipes package we first create the initial recipe and then tell R about the steps required for processing.
+- the initial recipe in this case is the model formula (outcome(s) and predictor(s))
+- then we prepare the recipe 
+- finally we bake the case (dataset). 
+
+## Tidymodels: Recipes
+
+- here I first import the datasets
+- then join the two datasets.
+- then select a subset of variables
+
+- I have dataset here called **nh** it includes information about a sample of adults in the US aged 19-80
+- nh variables are: 
+  + Body Mass Index (BMI) 
+  - Waist circumference (WC)
+  + if obese or not (BMI>29 => obese)
+  + Age
+  + Gender
+  + Race
+  + Education, 
+  + Total Cholesterol 
+  + place of birth
+  + poverty ratio (relative household income to the poverty line)
+
+- I would like to examine a model related to the association between BMI as the outcome and age, gender and education as predictors. 
+
+```{r include=F,message=FALSE,warning=FALSE}
+
+nh <- nh %>%
+  mutate(
+    gender = as.character(gender), 
+    education = as.character(education)
+  )
+```
+
+
+## Tidymodels: Recipes
+
+```{r,message=FALSE}
+
+knitr::kable(head(nh,n = 4),digits = 2)
+glimpse(nh)
+```
+
+## Tidymodels: Recipes
+- In R a model is written as follows: 
+  + (BMI ~ age + gender + education)
+- BMI here is outcome (or y) and age, gender and education are predictor (or x)
+- gender and education are factors (categorical) variables but stored as characters.
+- BMI and Age are stored as numeric so we do not have to make any changes. 
+- also we would like to make a dummy variable for each category of gender and education
+  + some algorithms do not accept factor variables so we have to make dummy variables that are in form of numeric.
+  + we can easily choose the base level
+- Now we can take the initial step to make the recipe
+
+## Tidymodels: Recipes
+```{r}
+# at the initial step we introduce the model specification, the role of variables and dataset.
+recipe_bmi_1 <- recipe(BMI ~ age + gender + education, data=nh)
+recipe_bmi_1
+```
+
+## Tidymodels: Recipes
+
+- Now it is the the time to introduce the processing steps. 
+- the processing steps can be taken in recipes package by the use of step_... functions. 
+- There are several different types of steps function that we can use. 
+  + https://cran.r-project.org/web/packages/recipes/vignettes/Simple_Example.html
+  
+- Remember:  gender and education are stored as character and we have to take two steps:
+  + transform character to factor
+  + make dummy variables from factors
+
+## Tidymodels: Recipes
+
+- so we first use step_string2factor transforming character variables to factor variables.
+- note that nothing is happening we are still in the process of writing the recipe. 
+
+```{r}
+recipe_bmi_2 <- recipe_bmi_1 %>%
+  step_string2factor(gender, education)
+recipe_bmi_2
+```
+
+## Tidymodels: Recipes
+
+- in this step I used step_dummy(), I tell R to convert race and education categories to dummy variables. 
+- one_hot=TRUE means all the categories should be converted to dummies. (one level is dropped by default to avoid multicolinearity)
+
+```{r}
+recipe_bmi_3 <- recipe_bmi_2 %>%
+  step_dummy(education, gender,one_hot = TRUE)
+recipe_bmi_3
+
+```
+
+## Tidymodels: Recipes
+
+- We had a few variables, so we had to take only a few steps. 
+- Now it is the time for preparation. 
+- We can use a function in the recipes package called prep (stands for prepare)
+
+## Tidymodels: Recipes
+
+-we tell R what recipe should be used for preparing => recipe_bmi_step3. 
+- we tell R what dataset should be used for preparing => training = nh
+
+```{r}
+prep_bmi <- prep(x = recipe_bmi_3)
+  
+  recipe_bmi_3 %>%
+  prep(nh)
+
+
+prep_bmi
+```
+
+
+## Tidymodels: Recipes
+
+- We told R about the recipe
+- We told R to prepare the recipe
+- Now it is the time to bake. 
+- To bake we use bake function.
+
+## Tidymodels: Recipes
+```{r}
+bmi_data_1 <- prep_bmi %>%
+  juice()
+kable(head(bmi_data_1, 4))
+```
+
+## Tidymodels: Recipes
+- I used a simple recipe, now I would like to add more steps including converting numerical variables to log level and introducing interactions.
+
+## Tidymodels: Recipes
+```{r}
+recipe_bmi_all <- recipe(BMI ~ age + gender + education, data=nh) %>%
+   step_log(BMI, age) %>%
+   step_string2factor(education, gender) %>%
+  step_dummy(education, gender,one_hot = TRUE) %>% 
+  step_interact(~starts_with("gender"):age) # gender was transformed to dummy (2 levels).So I use starts with() to make sure the step is taken
+
+prep_bmi_all <- prep(recipe_bmi_all) 
+
+data_bmi_all <- prep_bmi_all %>%
+  juice()
+
+```
+
+## Tidymodels: Recipes
+
+```{r}
+kable(head(data_bmi_all, 4))
+
+```
+
+## Tidymodels: parsnip
+
+- There are several functions in R used for modelling. 
+- For a list of the packages and their algorithm check: https://tidymodels.github.io/parsnip/articles/articles/Models.html
+- These functions have different environments. 
+- parsnip package is designed so we can conduct a wide range of modelling analyses in one environment. 
+
+## Tidymodels: parsnip
+
+- If you want estimate the association between BMI (as outcome), age (as predictor), gender (as predictor) and education (as predictor) in a simple linear model: 
+  + lm(BMI~ age + gender + education, data = nh)
+
+- If you want estimate a logistic regression between obese (as outcome), age (as predictor) and gender (as predictor) in a simple linear model: 
+  + glm(obese~ age + gender, data = nh, family="binomial")
+
+## Tidymodels: parsnip
+
+- after using the recipes and building the dataset we can use parsnip. 
+- the first step is to tell parsnip about the specification of model. 
+- so, we first say that we are going to conduct a linear regression (linear_reg)
+```{r}
+linear_reg_bmi <- parsnip::linear_reg()
+linear_reg_bmi
+```
+
+## Tidymodels: parsnip
+- the second step is to tell parsnip about the type of computational engine used for analysis (lm, glmnet,etc.). 
+- there are several computational engine for linear regression including lm,glmnet,keras, etc. 
+- here we use lm
+
+```{r}
+linear_reg_bmi <- parsnip::linear_reg() %>%
+  set_engine("lm")
+linear_reg_bmi
+```
+
+## Tidymodels: parsnip
+
+- now it is the time to tell parsnip about the outcome, predictors and data.
+
+```{r}
+linear_reg_bmi <- parsnip::linear_reg(mode = "regression") %>%
+  set_engine("lm") %>%
+  fit(BMI~ age + gender_Male + education_College_Degree,
+      data=data_bmi_all)
+
+
+summary(linear_reg_bmi$fit)
+```
+
+
+## use broom to save the tidy version of result
+
+```{r}
+# note that the results are stored at linear_reg_bmi$fit
+# tidy coefficients 
+linear_reg_bmi_tidy <- linear_reg_bmi$fit %>%
+  broom::tidy()
+# glance of model: store r_squared and other criteria
+linear_reg_bmi_glance <- linear_reg_bmi$fit %>%
+  broom::glance()
+
+# augment of model: store outcome, predictor, residuals and fitted values in a dataset using broom::augment()
+
+linear_reg_bmi_augment <- linear_reg_bmi$fit %>%
+  broom::augment()
+
+```
+
+
+## Using augment 
+
+```{r}
+# apparently there is no trend in scatterplot of .fitted and .resid values. 
+linear_reg_bmi_augment %>%
+  ggplot(aes(x=.fitted, y=.resid)) +
+  geom_point(alpha=0.1)
+```
+
+## Tidymodels: parsnip
+- now I am going to use rsample, recipes, parsnip and yardstick for the logistic regression. 
+- I use rsample to make training and testing datasets
+- I use recipes for pre-processing. 
+- I use parsnip for estimating the model. 
+- I use yardstick to evaluate the model performance. 
+
+## Tidymodels: parsnip
+```{r}
+# split nh to testing and training sets where 70% of data is kept for training and the rest for testing
+set.seed(1234)
+nh_split <- initial_split(nh, prop = 0.80)
+nh_split
+```
+
+## Tidymodels: parsnip
+
+```{r}
+glimpse(nh)
+# make recipe and prep
+train_nh <- training(nh_split)
+test_nh <- testing(nh_split)
+
+# we first work on training set and then pass it on to testing set. 
+
+nh_obese_rec <-  train_nh %>%
+  recipe(obese ~ age + gender) %>%
+  step_string2factor(gender, obese) %>%
+  step_dummy(gender,one_hot = T) %>%
+  prep()
+
+# bake and get the testing set
+nh_obese_test <- nh_obese_rec %>%
+  bake(test_nh) 
+
+# juice and get the training set
+nh_obese_train <- nh_obese_rec %>%
+  juice()
+```
+
+## Tidymodels: parsnip
+
+```{r}
+# use parsnip for logistic regression, we have to specify mode is classification (we are classifying if obese or not) 
+obese_logistic <- nh_obese_train %>%
+  parsnip::logistic_reg(mode = "classification") %>%
+  parsnip::set_engine("glm") %>%
+  fit(obese ~ age+gender_Male, data=nh_obese_train)
+```
+
+## Tidymodels: parsnip
+
+```{r}
+# use predict to predict obesity and add the predicted values as a column to the testing set 
+
+obese_logistic %>%
+  parsnip::predict.model_fit(nh_obese_test) %>%
+  bind_cols(nh_obese_test) %>%
+  glimpse()
+```
+
+## YardStick
+
+- Yard Stick (YS) is a package used to evaluate the performance of our model. 
+- here we used logistic regression and the mode was classification
+- so we want to know the accuracy of our model in terms of predicting the number of obese people 
+- we first use the fitted results stored in obese_logistic
+- then we use the predict.model_fit function. the predict function uses the logistic regression results (parameters) and then apply these results in the case of nh_obese_test dataset we created before. 
+- predict function, creates a single column of prediction of the outcome (obesity)
+- here I create the predict results using nh_obese_test and then bind it with the dataset columns nh_obese_test to see them next to each other. 
+- here I use conf_mat() function to get the confusion matrix
+- we had two groups obese and non-obese in the testing set. 
+- the model used in the training set also classified the people in the testing set. 
+- the true number of obese     individuals correctly classified as obese by our model is 124
+- the true number of NON-obese individuals correctly classified as NON-obese by our model is 296
+- the true number of obese     individuals incorrectly classified as NON-obese by our model is 250
+- the true number of NON-obese individuals incorrectly classified as obese by our model is 97
+
+
+```{r}
+# logistic : Model Validation
+
+# first we create the predict dataset using the test set
+
+predicted <- obese_logistic %>%
+  predict.model_fit(nh_obese_test) %>%
+  bind_cols(nh_obese_test) 
+
+# then we use the confusion matrix 
+
+predicted %>%
+conf_mat(truth = obese, estimate =.pred_class, dnn = c("Prediction", "Truth")) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+
+```
+## yardstick 
+
+- So we can now measure the accuracy of our model in classifying the obese and non-obese people together. 
+- accuracy measure : [total number of true predictions]/[total number of observations]
+- accuracy = (number of obese who correctly classified + number of non-obese correctly classified)/(total number of observations)
+- accuracy: (281+149)/767 = 0.56. 
+- another important measure is kappa statistics
+- kappa statistics relates our model as a classifier to a model that simply classifies obese and non-obese people randomly. 
+- in other word kappa will tells us if our model does a better job than a random classification
+- how to interpret kappa: 
+  + kappa <0 => very bad 
+  + 0.0 =< kappa =< 0.2 slightly good 
+  + 0.21 =< kappa =< 0.4 fair 
+  + 0.41 =< kappa =< 0.6 moderate
+  + 0.61 =< kappa =< 0.8 very good 
+  + 0.81 =< kappa =< 1 perfect 
+
+
+```{r, tidy=T}
+predicted %>%
+  metrics(truth = obese, estimate =.pred_class)
+
+
+# the joint probability of classifying a person as an obese person by random classifier and our model:
+# by random classifier is equal to the total number of obese/total number of observations =>
+# (210+149)/767
+# By our model is equal to what is predicted by model to be obese/ total number of observation =>
+# (127+149)/767
+# we assume they are independent so the joint probability is (359/767)*(276/767) =0.4680574*0.3598435=0.1684274
+# => 1: 0.168 
+
+# the joint probability of classifying a person as a non-obese by random classifier and our model.
+
+# 2: (0.5319426*0.6401565) = 0.3405265
+
+# expected accuracy : = 1 + 2 = 0.1684274+0.3405265= 0.5089539
+# observed accuracy 0.56
+# kappa = (observed accuracy- expected accuracy)/(1-expected accuracy)
+# kappa = (0.5606258 - 0.5089539)/(1-0.5089539) = 0.1052282
+```
+
+
+
+
+## Tidymodels: parsnip
+
+- we can introduce an argument in predict.model_fit() called type = "prob" rendering the predicted values. 
+- the classifier uses a threshold to classify based on the predicted probability. 
+- for instance if the threshold is 50% then we can classify any value equal and above 50 as obese and below 50 as non-obese
+
+```{r}
+probability_obese <- obese_logistic %>%
+  predict.model_fit(nh_obese_test,type="prob") %>%
+  bind_cols(nh_obese_test) 
+
+glimpse(probability_obese)
+
+predicted %>% bind_cols(probability_obese)
+
+```
+
+
+# An Introduction to Machine Learning (ML)
+
+
+
+
+```{r message=F, warning=F, echo=F}
+#library(xopen)
+#i <- xopen("https://www.google.com/maps/dir/UBC+Bookstore,+6200+University+Blvd,+Vancouver,+BC+V6T+1Z4/MacMillan+Building,+Main+Mall,+Vancouver,+BC/@49.2637092,-123.2531157,16.31z/data=!4m14!4m13!1m5!1m1!1s0x548672b63e443e4d:0xe3251289feb9b9f7!2m2!1d-123.250572!2d49.26507!1m5!1m1!1s0x548672cbb358e683:0x421116ae99ce3238!2m2!1d-123.2509716!2d49.2612748!3e2")
+
+library(tidyverse)
+library(haven)
+
+# import data
+main <- read_csv("/Users/shh/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/Dairy/MainActivity.csv")
+# making a tidy dataset 
+
+main_tidy <- main %>%
+  select(id = ID,
+         lactation=Lact,
+         parity = Parity, body_condition=BCS,
+         days_in_milk= DIM,
+         raw_duration= RawDurat,
+         duration = Durat, 
+         peak= Peak, 
+         activity_bou= ActBou,
+         body_condition = BCS,
+         body_temp = Btemp, 
+         temp_humidity_index = THI, 
+         estrus= Estrus, 
+         bred = Bred, 
+         pregnant = Preg,
+         milk_production=Milk
+         )
+main_tidy <- main_tidy %>%
+  mutate(
+         lactation=as.factor(lactation),
+         parity = as.factor(parity), 
+         body_condition=as.numeric(body_condition),
+         days_in_milk= as.numeric(days_in_milk),
+         raw_duration= as.numeric(raw_duration),
+         duration = as.numeric(duration), 
+         peak= as.numeric(peak), 
+         activity_bou= as.numeric(activity_bou), 
+         body_temp = as.numeric(body_temp), 
+         temp_humidity_index = as.numeric(temp_humidity_index), 
+         estrus= as.factor(estrus), 
+         bred = as.factor(bred), 
+         pregnant = as.factor(pregnant),
+         milk_production=as.numeric(milk_production),
+         id=as.integer(id))
+
+### NHANES
+library(haven)
+demographic <- read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/DEMO_I.XPT")
+lab_chol_total <- read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/TCHOL_I.XPT")
+body_condition <- read_xpt("https://wwwn.cdc.gov/Nchs/Nhanes/2015-2016/BMX_I.XPT")
+
+# join 
+
+joined <- left_join(demographic, lab_chol_total, by="SEQN")
+joined_1 <- left_join(joined, body_condition, by="SEQN")
+
+# select 
+
+df <- joined_1 %>%
+  select(
+    SEQN, 
+    gender= RIAGENDR,
+    age= RIDAGEYR,
+    race=RIDRETH3,
+    foreign_born=DMDBORN4,
+    education=DMDEDUC2,
+    poverty_ratio= INDFMPIR,
+    total_chol= LBXTC, 
+    BMI = BMXBMI, 
+    WC = BMXWAIST
+    ) %>%
+  filter(total_chol != "NA", 
+         age>18, age<71)
+
+#recoding 
+
+
+nh <- df %>%
+  mutate(obese = ifelse(BMI>29, "Yes", "No"),
+    gender = as.factor(gender), 
+    race = as.factor(race), 
+    foreign_born = as.factor(foreign_born), 
+    education = as.factor(education),
+    gender = fct_recode(gender, Male= "1", Female= "2"),
+    race = fct_recode(race, Mexican= "1", Hispanic= "2", White="3", Blakc="4", Asian="6", Other="7"), 
+    foreign_born = fct_recode(foreign_born, USA_Born= "1", Foreign_Born="2"),
+    education = fct_recode(education, 
+                                 No_College_Degree = "1",
+                                 No_College_Degree = "2",
+                                 No_College_Degree = "3",
+                                 No_College_Degree = "4",
+                                 College_Degree = "5")) %>%
+  na.omit()
+
+
+```
+
+
+<a href="http://www.example.com"target="_blank">Example Link</a>
+
+- if you want to travel from McMillan Bldg. to UBC Bookstore, which way do you choose? 
+
+- <a href="https://www.google.com/maps/dir/UBC+Bookstore,+6200+University+Blvd,+Vancouver,+BC+V6T+1Z4/Macmillan+Building,+Main+Mall,+Vancouver,+BC/@49.2637092,-123.2531157,16.31z/data=!4m14!4m13!1m5!1m1!1s0x548672b63e443e4d:0xe3251289feb9b9f7!2m2!1d-123.250572!2d49.26507!1m5!1m1!1s0x548672cbb358e683:0x421116ae99ce3238!2m2!1d-123.2509716!2d49.2612748!3e2" target="_blank">Best Route Link</a>
+
+- if you wanted to ask a robot to choose the best route how would you do that?
+
+- ML is based on the following question:
+  + can we teach a machine to do a task on its own? 
+  
+## ML and statistics
+
+- suppose you are asked to provide advice about factors affecting successful pregnancy of diary cows by a large dairy farmer. 
+- or you are asked to provide advice on factors affecting cholesterol levels of people in the US.
+- in all of these situations your job is to estimate a model $Y = \alpha + \beta_1X_1 + \beta_2X_2 + \epsilon$ that can be also written as $Y = f(X_1,X_2)$
+- So, the question is what is it that we gain by estimating $f(.)$
+  + prediction: using the data we estimate $f(.)$ giving us $\hat Y$
+  + inference: sometimes we not only are interested in the prediction of Y, but also are interested in understanding the relationship between $X_1$ and $X_2$ and $Y$. 
+
+## ML and statistics
+
+- conducting regression analysis, we provide two primary sets of information for a machine: 
+  + rules or methods to estimate $f(.)$
+  + observed data known also as training data
+- the data is called training set because it is used to train the method for estimating $f(.)$.
+- we can also use a subsample of data as testing set, to find out how well our model predict the outcome. 
+- in general, there are two types of methods for estimating $f(.)$:
+  + parametric method: we assume a functional form (e.g. linear) about the relationship between $X$ and $Y$) and then we estimate $f(.)$
+  + non-parametric method: we do not make any assumption about the functional form. Rather, the method looks for a relationship between $X$ and $Y$ such that the fitted value of $Y$ ($\hat Y$), is highly close to the real $Y$.
+- parametric and non-parametric methods have their own advantages and disadvantages. - parametric methods:
+  + can be estimated very fast. 
+  + do not need to many observations.
+  + they are likely to be biased (a large difference between $Y$ and $\hat Y$)
+- non-parametric methods
+  + provide less biased predictions for the training datasets (but not for the testing set)
+  + need large datasets.
+  + need extensive computational power
+  + do not provide proper inference
+
+## ML, how to choose the best model 
+- when it comes to the case of the ML, we usually have to estimate $f(.)$ with more than one method (e.g. linear regression and spline method). 
+- this is because of the fact that methods can have different behaviors over different datasets. 
+- therefore, we usually try to estimate $f(.)$ with more than one method and compare the accuracy of the methods. 
+
+
+```{r echo=F, message=F, warning=F}
+library(tidyverse)
+library(tidymodels)
+library(NHANES)
+library(haven)
+
+x <- rnorm(100, mean = 0,sd = 1) 
+y <- 10 + x+ 2*x^2 + 3*x^3 + rnorm(100,1,1)
+df <- cbind.data.frame(x=x,y=y)
+
+
+df_split <- initial_split(df, prop = 0.6)
+train.data <- training(df_split)
+test.data <- testing(df_split)
+
+
+model_1 <- parsnip::linear_reg() %>%
+  set_engine("lm") %>%
+  parsnip::fit(y~x,data=train.data)
+
+predicted_1 <- model_1 %>%
+  predict(test.data) %>%
+  bind_cols(test.data) 
+
+p1 <- predicted_1 %>%
+  metrics(truth = y, estimate =.pred)
+
+
+model_2 <- parsnip::linear_reg() %>%
+  set_engine("lm") %>%
+  parsnip::fit(y~poly(x, 2, raw = TRUE),data=train.data)
+
+predicted_2 <- model_2 %>%
+  predict(test.data) %>%
+  bind_cols(test.data) 
+
+p2 <- predicted_2 %>%
+  metrics(truth = y, estimate =.pred)
+
+model_3 <- parsnip::linear_reg() %>%
+  set_engine("lm") %>%
+  parsnip::fit(y~poly(x, 3, raw = TRUE),data=train.data)
+
+predicted_3 <- model_3 %>%
+  predict(test.data) %>%
+  bind_cols(test.data) 
+
+p3 <- predicted_3 %>%
+  metrics(truth = y, estimate =.pred)
+
+predict_final <- cbind.data.frame(x= test.data$x, y= test.data$y,
+                                 predict_1 = predicted_1$.pred, 
+                                 predict_2 =predicted_2$.pred , 
+                                 predict_3 = predicted_3$.pred)
+
+graph_1 <- predict_final %>%
+  ggplot(aes(x,y)) +
+    geom_point( alpha=0.4, size=2) +
+  geom_smooth(method = "lm",se=F, color= "blue", lty=2) +
+  geom_smooth(method = "loess",se=F, aes(y=predict_2), color="darkgreen") +
+  geom_smooth(method = "loess",se=F, aes(y=predict_3), color="red") +
+  theme_light()
+
+metrics <- bind_rows(p1,p2,p3)
+
+
+metrics_rm <- metrics %>%
+  filter(.metric=="rmse") %>%
+  mutate(.metric = as.factor(.metric))
+
+metrics_rm
+
+graph_2<- metrics_rm %>%
+  ggplot(aes(x=.metric,y=.estimate)) +
+  geom_point(color="red", size=2) +
+   geom_hline(lty=2,size=1,aes(yintercept=.estimate, color=factor(.estimate)),show.legend = F) +
+   theme_light() +
+  scale_y_continuous(breaks = scales::pretty_breaks(15)) 
+
+  
+
+library(gridExtra)
+gridExtra::grid.arrange(graph_1,graph_2,ncol=2 )
+
+
+```
+
+
+## bias-variance trade-off
+- assume that we want to estimate $Y = f(X)$ to find $\hat f(.)$. 
+- also assume that we are given **several training sets** so we can conduct our analysis for each set separately. 
+- the estimation of $Y = f(X)$ that is $\hat f(.)$ will be different for each training set. 
+- the variance here refers to the magnitude of differences in $\hat f(.)$ across the training sets. 
+- as it was mentioned before, the non-parametric methods are more flexible than parametric methods
+- they do a really good job in predicting the outcomes in the case of a specific training set
+- however, they will be different for another training set. 
+- so the non-parametric methods have high variance.
+- bias is related to the difference between $Y$ and $\hat Y$ (real value of outcome and the predicted value of outcome). 
+- using simple models like linear regression more likely results in a biased estimation of $Y$. 
+- in general, the simpler methods are more biased and have less variance
+- in general, the more flexible methods are less biased and have more variance. 
+
+
+## Resampling
+
+- Here we will review cross-validation (CV) and bootstrapping as two important resampling methods. 
+
+## CV
+
+- We talked about training and testing sets before. 
+Recap: 
+1.	use the training set and estimate a series of models,
+2.	use the results in stage 2 to predict outcomes in the testing set
+3.	compare the results across the models and choose the one with lowest test error (RMSE)
+- This is a good method if we had easy access to a testing test, 
+- However this is not usually the case
+
+## CV
+- If we do not have a proper testing set that is the case most of the times we use CV. 
+
+- There are three types of CV
+  + validation set approach
+  + leave one out
+  + k-fold
+
+
+
+## CV: validation set method (VSM-CV)
+
+- VSM-CV is a CV method where we split the dataset into two subsamples of training and testing sets.
+
+- it includes the following steps: 
+1.	draw two non-overlapping, randomly chosen subsamples out of the dataset and call them training and testing set.
+2.	estimate the models of interest using the training set
+3.	use the results in stage 2 to predict outcomes in the testing set and record the test error for each model
+
+- VSM-CV has some disadvantages:
+ + because we choose two subsamples randomly the test error criteria could be significantly different across two different testing sets.
++ by dividing the dataset into training and testing sets we are using smaller number of observations to fit the model in the training set. 
+
+ 
+
+## CV: leave one out (LOO-CV) 
+
+- LOO-CV is a CV method when the testing set includes only one observation.
+
+- For example if we have 100 observations, we first randomly choose 99 observations for fitting the model, and then choose the $x_{100}$ to predict $y_100$ and then we get the squared-residual that is  $(y_{100}-\hat y)^2$.
+
+
+- Note that we are not using residuals sum of squares or the mean values of residuals sum of squares, we rather have a an unbiased measure of squared-residual for the 100th observation. 
+
+- this process is repeated until each observation is once considered as a testing set.
+
+- Finally we use the average of squared-residuals to get the average of the criteria.
+
+## CV: k-fold (k-fold CV)
+
+- LOO-CV is a special case of  k-fold CV.
+- In LOO-CV the validation set includes only one observation.
+- However, in k-fold CV we have several observations in the validation set.
+- for example in 10-fold-CV we split the dataset into 10 non-overlapping subsample chosen randomly. 
+- we use nine subsample as training set and one as testign. 
+- estimate the models for training set and predict the outcome for the testing set. 
+- record the metric (e.g. RMSE)
+- repeat the process until each subsample (out of 10) is considered as a testing set 
+- calculate the average RMSE for each model 
+- compare the results choose the model. 
+
+## k-fold vs LOO CV
+- k-fold and LOO CV (specially with k=5 or k=10) render very close results 
+- LOO-CV needs high computational power 
+- so k-fold could be a better choice. 
+
+## bootstrapping 
+
+- Assume we are looking for the mean value of BMI of people in the US and we are also trying to get a sense of variability of this measure. 
+- We can once collect a sample of adults and record their BMI, then calculate the mean. Again, we can collect a sample of adults in the US record their BMI and calculate the mean. After several attempts we will have some measure of variability of BMI across samples. 
+
+- However, it is very costly to collect data in this way
+
+- In bootstrapping, we once collect data, then we go through the following procedure: 
+
+1.	draw random samples out of the sample drawn first with replacement (an observation can be included in the bootstrapped sample more than once)
+2.	 calculate the mean BMI. 
+3.	repeat this process several times (e.g. 1000 times). 
+4.	calculate the standard error of mean BMI across the bootstrapped samples. 
+
+
+
+
+## Types of ML
+
+- There are usually three types of ML:
+  + regression
+  + classification
+  + clustering
+  
+- You might also hear about:  
+- supervised learning: regression or classification models are known as supervised ML because, the researcher determines the features (variables) affecting the outcome
+- clustering is also know as unsupervised ML. In clustering we are not looking for the relationship between outcome and predictors. Rather we are interested in finding the groups in a observations based on their features (variables) 
+
+
+## linear models 
+
+- in a linear model like $Y = a + bX+\epsilon$, we assume there is linear relationship between X and Y and the relationship is indicated by $b$. 
+- Also, if $X$ is equal to 0, Y is expected to be equal to $a$. 
+
+- in linear regressions (OLS), we look for a line where the sum of square distances of all data points from the line is minimized 
+
+
+![source:statisticshowto](https://www.statisticshowto.datasciencecentral.com/wp-content/uploads/2014/11/least-squares-regression-line.jpg){#id .class width=100% height=300%}
+
+## linear models 
+
+- $\epsilon$ is assumed to have a normal distribution with mean of zero and standard deviation of $\sigma^2$. 
+
+- in R we usually use lm() function to run the linear regression. 
+- a linear model examining the association between poverty_ratio and BMI is estimated below. 
+- note that *broom* is a package for tidy presentation of regression model results. 
+
+```{r, echo=T, message=F, warning=F}
+
+# plot
+nh %>%
+  ggplot(aes(poverty_ratio, BMI)) +
+  geom_point(alpha=0.1) +
+  geom_smooth(method = "lm",se=F)
+
+# linear model  
+model_bmi <- lm(BMI~poverty_ratio, data=nh)
+#broom 
+model_bmi %>%
+  broom::tidy()
+```
+
+##  good enough models 
+- building a model can takes forever
+- there are always room for improvement 
+- however, we do not have all the times in the world to come up with a perfect model
+- rather we have to try to choose a model that is useful (Box)
+- how do we know that we have a good model?
+- there are few criteria helping us in building a good model
+- here we however mention the residuals as the most important criteria to find out if a model works well or not? 
+- note that we use RMSE to compare the models, but we use residuals here to examine the behavior of a model. Although we can use residuals for model comparison as well. 
+
+##  good enough models 
+- note that we estimate $\hat Y$, the real outcome is $Y$ and the residual for each observation is $Y_i-\hat Y_i = residual_i$
+- residuals can be used in three ways: 
+1. plot of residuals vs fitted values (r on the y axis, $\hat Y$ on the x-axis)
+  + no patterns should be observed in this plot
+2. Q-Q plot, a good model produces residuals whose standardized values should be located on a straight line. if this not the case, the model has problem
+3. histogram of residuals should be normally distributed. 
+
+```{r, echo=T, message=F, warning=F}
+
+# run the model
+model_bmi <- lm(BMI~poverty_ratio, data=nh)
+
+# use broom to make a dataset of residuals and fitted line
+augment1 <- model_bmi %>%
+  broom::augment()
+
+# plot of resid vs. fitted values 
+# it seems that there is no pattern here.
+augment1 %>%
+  ggplot(aes(x=.fitted, y=.resid)) +
+  geom_point(alpha=0.1) +
+  geom_smooth()
+
+
+
+## use geom_qq
+## boom also create a variable called .std.resid that is the standardized value of residuals
+## it is not a good model as the standardized residuals fall on
+augment1 %>%
+  ggplot(aes(sample=.std.resid)) +
+  geom_qq() +
+  geom_abline()
+
+
+## or simply use 
+# note that residuals vs leverage will help us to find out about important data points including outliers. 
+# this plot shows residuals are not associated with leverage (the degree by which fitted values changes with respect to a change in real outcome)
+# no value should be outside of Cook distance, otherwise it is a sign of high impact. 
+
+plot(model_bmi)
+
+# histogram
+
+augment1 %>%
+  ggplot(aes(.std.resid)) +
+  geom_histogram(bins = 70) +
+  geom_vline(xintercept = c(-2,0,2), lty=2, color="red")
+```
+
+## generalized linear model (GLM) : logistic regression
+
+- in the case of linear model, the outcome is a continuous variable. 
+- however, there are situations where we are trying to compare one state to another (e.g. obese vs. not-obese, good vs bad weather.)
+- logistic regression is used to examine the probability of going from one state to another one when the predictor changes.
+- formally we can write it as $Pr(cholesterol level =high | age = 40)$
+
+![source:DataCamp](http://res.cloudinary.com/dyd911kmh/image/upload/f_auto,q_auto:best/v1523361626/linear_vs_logistic_regression_h8voek.jpg)
+
+
+## generalized linear model (GLM) : logistic regression
+- logistic regression in R gives us logit values 
+- in logit we can only talk about positive and negative association between X and Y (non-linear relationship)
+- we can use odds ratio by taking $e^\beta$
+- e.g. odd ratio of 1.2 for the logistic regression of high cholesterol and sex_female shows the probability of having high cholesterol is 20% higher among the females. 
+
+```{r, echo=T, message=F, warning=F}
+library(ggplot2)
+
+main_tidy_bred <- main_tidy %>%
+  mutate(pregnant = as.factor(pregnant)) %>%
+  dplyr::mutate(body_temp_cat = ifelse(body_temp>39, 1,0), 
+         estrus_cat = ifelse(estrus == "Stg", "Strong","Not_Strong"))
+
+
+model_bred <- glm(bred ~ estrus_cat,family = binomial(link = "logit"),data= main_tidy_bred)
+
+
+
+
+# broom::tidy
+model_bred %>%
+  broom::tidy() 
+
+# getting odd-ratios
+library(MASS)
+
+exp(cbind(coef(model_bred),confint(model_bred)))
+# or
+
+
+# broom::augment
+model_bred_augment <- model_bred %>%
+  broom::augment() %>%
+  bind_cols(pred = fitted(model_bred))
+
+  
+```
+
+```{r, echo=T, message=F, warning=F}
+model_bred_pars <- main_tidy_bred %>%
+  parsnip::logistic_reg(mode = "classification") %>%
+  parsnip::set_engine("glm") %>%
+  parsnip::fit(bred ~ estrus_cat, data=main_tidy_bred, family =binomial(link = "logit"))
+
+prob <- model_bred_pars %>%
+  predict(main_tidy_bred,type="prob") %>%
+  bind_cols(main_tidy_bred)
+ 
+
+ prob %>%
+ ggplot(aes(.pred_1)) +
+   geom_density(aes(fill=bred))
+
+```
+
+
+# Decision Tree (DT) and Random Forest (RF)
+
+
+
+## DT example 
+
+
+```{r}
+# loading the libraries
+# 
+library(tidymodels)
+library(tidyverse)
+library(NHANES)
+
+# importing the data
+nh_w <-NHANES::NHANES
+
+# data manipulation
+nh_dt <- nh_w %>%
+  filter(Age>18, Age<75) %>%
+  dplyr::select(sex = Gender,age = Age,activity = PhysActive, Race1,BMI,Education, smoker= SmokeNow,sleep_problem = SleepTrouble) %>%
+  dplyr::mutate(
+    activity_level = ifelse(activity =="Yes", "High", "Low"), 
+    race = ifelse(Race1 == "White","White", "Non-White"), 
+    obese = ifelse(BMI>29, "Obese", "Normal"), 
+    college = ifelse(Education == "College Grad", "College", "No-Colledge"), 
+    age_cat = ifelse(age>50, "Old", "Young")
+  ) %>%
+      dplyr::select(sex, activity_level,smoker,race,college, obese) %>%
+  na.omit()
+
+
+
+```
+
+## DT, Recipe 
+
+```{r}
+
+# creating the initial train and test set
+set.seed(1234)
+nh_split <- initial_split(data = nh_dt, prop = 0.70)
+nh_train <- training(nh_split)
+nh_test <- testing(nh_split)
+glimpse(nh_train)
+
+# recipe for data pre-processing
+nh_dt_rec <- nh_train %>%
+  recipe(obese ~ sex+ activity_level+ smoker+race+college) %>%
+  step_string2factor(activity_level, race, obese,college) %>%
+  prep()
+
+# bake and get the testing set
+nh_test_1 <- nh_dt_rec %>%
+  bake(nh_test) 
+
+# juice and get the training set
+nh_train_1 <- nh_dt_rec %>%
+  juice()
+
+```
+
+
+## Parsnip
+```{r}
+
+# simple decision tree
+# the mode here is classification because the outcome is binary (obese or normal)
+# we use pre-set decision-tree function in parsnip
+# and then we set the engine to be "rpart". rpart is a package used to estimate DT.
+
+nh_tree <- parsnip::decision_tree(mode = "classification",cost_complexity = 0.01) %>%
+  parsnip::set_engine("rpart") %>%
+  parsnip::fit(obese ~., data = nh_train_1)
+
+nh_tree$fit
+
+nh_train_1 %>% 
+  group_by(obese) %>%
+  count()
+#plotting the tree
+rpart.plot::rpart.plot(nh_tree$fit,type = 5,fallen.leaves = T,roundint = F,extra = 104)
+
+
+```
+
+
+```{r}
+
+# making a dataset including both real values of obesity and predicted values (.pred_class)
+predicted_tree <-  predict.model_fit(nh_tree,nh_test_1) %>%
+  bind_cols(nh_test_1)
+
+
+predicted_tree
+glimpse(predicted_tree)
+# conf matrix
+predicted_tree %>%
+yardstick:: conf_mat(truth = obese, estimate =.pred_class) 
+# kappa and accuracy
+predicted_tree %>%
+  metrics(truth = obese, estimate =.pred_class)
+
+
+```
+
+
+```{r}
+
+# in ML there are a set of parameters called hyperparameters. 
+# hyperparameters are not estimated and should be set by the researcher.
+# we use the cross-validation to find the best hyperparameters.
+# this is done in tidymodels by a package called tune. 
+# in DT we have cost complexity, min number of observations at each split and tree depth (the highest depth is equal to the number of observations minus 1)
+# tune chooses a set of values, run the model for each value and based on a metric (e.g. kappa or accuracy) chooses the hyperparameters.
+
+library(tune)
+
+# making a dataset for CV where the number of CV is 5.
+nh_cv <- vfold_cv(nh_train_1, v = 5)
+
+# then we tell R to use decision-tree function, with mode of classification, and cost_complexity = tune(). it means we are going to find the best cost_complexity value by tuning. 
+# note that we do not use the fit() function yet. 
+
+tree_mod <- decision_tree(
+  mode ="classification",  
+  cost_complexity = tune(),
+  ) %>%
+  set_engine("rpart") 
+
+# then we set the metric. here we want two metrics of accuracy and kap. 
+metric_values <- metric_set(accuracy, kap)
+
+set.seed(1000)
+# now we use tune_grid function. tells it that we want to fit a model where obese is the outcome and the predictors are the rest of the variables. The resampled dataset is nh_cv. Also, we set the model to be tree_mod specified above. finally, we tell R that the metrics used is set in metric_values that are kappa and accuracy.
+model_fit <- tune_grid(
+  obese ~., #1
+  resamples = nh_cv, #2
+  model = tree_mod, # 3
+  metrics = metric_values) #4
+  
+# now we can use select_best function to find the best value of cost_complexity based on kappa metric. 
+final_param <-select_best(
+  x = model_fit,
+  metric = "kap") %>%
+  as.list()
+
+final_param
+# finally we estimate the final decision_tree where we use cost_complexity calculated using tune_grid
+final_nh_tree <- decision_tree(mode = "classification",
+                               cost_complexity = final_param$cost_complexity) %>%
+                 set_engine("rpart") %>%
+                fit(obese ~., data = nh_train_1)
+
+final_nh_tree
+rpart.plot::rpart.plot(final_nh_tree$fit,type = 5,fallen.leaves = T,roundint = F,extra = 104)
+
+
+```
+
+
+```{r}
+
+# evaluate the model performance. 
+predicted_tree_final <-  predict.model_fit(final_nh_tree,nh_test) %>%
+  bind_cols(nh_test_1)
+
+predicted_tree_final %>%
+yardstick:: conf_mat(truth = obese, estimate =.pred_class) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+predicted_tree_final %>%
+  metrics(truth = obese, estimate =.pred_class)
+
+
+```
+
+
+## compare with logistic 
+
+```{r}
+nh_logistic <- parsnip::logistic_reg(mode = "classification") %>%
+  parsnip::set_engine("glm") %>%
+  parsnip::fit(obese ~., data = nh_train_1)
+
+
+exp(coef(nh_logistic$fit )) 
+
+
+
+predicted_logistic <-  predict.model_fit(nh_logistic,nh_test_1) %>%
+  bind_cols(nh_test_1)
+
+predicted_logistic %>%
+yardstick:: conf_mat(truth = obese, estimate =.pred_class) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+predicted_logistic %>%
+  metrics(truth = obese, estimate =.pred_class)
+
+```
+
+## Dairy Cows
+
+```{r}
+library(tune)
+library(tidyverse)
+
+
+main <- read_csv("/Users/shh/Dropbox/LECTURE COURSE UBC/APPLIED DATA SCI/Dairy/MainActivity.csv")
+# making a tidy dataset 
+
+main_tidy <- main %>%
+  dplyr::select(id = ID,
+         lactation=Lact,
+         parity = Parity, body_condition=BCS,
+         days_in_milk= DIM,
+         raw_duration= RawDurat,
+         duration = Durat, 
+         peak= Peak, 
+         activity_bou= ActBou,
+         body_condition = BCS,
+         body_temp = Btemp, 
+         temp_humidity_index = THI, 
+         estrus= Estrus, 
+         bred = Bred, 
+         pregnant = Preg,
+         milk_production=Milk
+         )
+
+
+main_t <- main_tidy %>%
+  filter(bred== 1) %>%
+  select(activity_bou,estrus,milk_production, pregnant) 
+
+main_t$activity_bou <- as.numeric(as.character(main_t$activity_bou))
+main_t$milk_production <- as.numeric(as.character(main_t$milk_production))
+
+
+main_split <- initial_split(main_t,prop = .70)
+main_train <- training(main_split)
+main_test <- testing(main_split)
+
+glimpse(main_train)
+
+main_rec <- recipe(pregnant ~., data = main_train) %>%
+  step_string2factor(estrus, pregnant) %>%
+  step_meanimpute(activity_bou, milk_production) %>%
+  prep()
+  
+main_test_1 <- bake(main_rec, new_data = main_test)
+main_train_1 <- juice(main_rec)
+
+
+main_cv <- vfold_cv(main_train_1, v = 5)
+
+tree_mod_main <- decision_tree(cost_complexity = tune()) %>%
+  set_mode("classification") %>%
+  set_engine("rpart") 
+
+metric_values_main <- metric_set(accuracy, kap)
+
+set.seed(1000)
+
+model_fit_main <- tune_grid(
+  pregnant ~.,model = tree_mod_main, resamples = main_cv, metrics = metric_values_main)
+
+
+final_param_main <-select_best(model_fit_main,metric = "accuracy") %>%
+  as.list()
+
+final_param_main
+final_main_tree <- parsnip::decision_tree(mode = "classification",cost_complexity = final_param_main$cost_complexity) %>%
+  parsnip::set_engine("rpart") %>%
+  parsnip::fit(pregnant ~., data = main_train_1)
+
+final_main_tree
+rpart.plot::rpart.plot(final_main_tree$fit,type = 5,fallen.leaves = T,roundint = F,extra = 104)
+
+
+
+predicted_tree_main <-  predict.model_fit(final_main_tree,main_test_1) %>%
+  bind_cols(main_test_1)
+
+predicted_tree_main %>%
+yardstick:: conf_mat(truth = pregnant, estimate =.pred_class) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+predicted_tree_main %>%
+  metrics(truth = pregnant, estimate =.pred_class)
+
+
+## logistic 
+## 
+final_main_logistic <- parsnip::logistic_reg(mode = "classification") %>%
+  parsnip::set_engine("glm") %>%
+  parsnip::fit(pregnant ~., data = main_train_1)
+
+predicted_logistic_main <-  predict.model_fit(final_main_logistic,main_test_1) %>%
+  bind_cols(main_test_1)
+
+predicted_logistic_main %>%
+yardstick:: conf_mat(truth = pregnant, estimate =.pred_class) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+predicted_logistic_main %>%
+  metrics(truth = pregnant, estimate =.pred_class)
+
+
+```
+
+
+
+
+## DT and high varaince
+
+- Here I used the heart data to show DT could results in different predictions. 
+
+```{r}
+library(ncvreg)
+heart <- heart
+heart$chd <- as.factor(heart$chd)
+set.seed(1234)
+cv_h <- vfold_cv(heart, v=5)
+
+cv_res <- function(splits,...) {
+  
+  dt <- parsnip::decision_tree(mode = "classification",cost_complexity = 0.01) %>%
+    parsnip::set_engine("rpart") %>%
+    parsnip::fit(chd ~., data = analysis(splits))
+  
+  hold <- assessment(splits)
+  
+  pred <- dt %>% 
+    parsnip::predict.model_fit(hold) %>%
+    bind_cols(hold)
+  
+  confu_mat <- pred %>%
+    conf_mat(truth = chd, estimate =.pred_class) 
+
+  
+  accu_kappa <- pred %>%
+    metrics(truth = chd, estimate =.pred_class)
+  
+  accu_kappa
+  
+  
+}
+
+
+cv_res(splits = cv_h$splits[[1]], chd)
+
+cv_res(splits = cv_h$splits[[3]], chd)
+
+
+#res <- map(.x = cv_h$splits, .f = cv_res)  
+
+
+```
+
+## Random Forest (RF)
+
+- Although, DT results in low bias, it is usually accompanied with high variance 
+  + variance: the estimations can be significantly different from one sample to another. 
+  
+- To solve this problem, statisticians used, bootstrapping and bagging and Random Forest methods (RF)
+- Bootstrapping is a process in which we choose a sample from a dataset that has the same size (number of observations) while some of the observations can be included in the new sample more than once. 
+- Example: if we have three observations $x_1, x_2, x_3$ and their variance is  $\sigma^2$, the variance of mean of $x_1,x_2,_x3$ is equal to  $\sigma^2/n$. 
+- Taking the average of a series of observations reduces the variance of observations. 
+- So, in the case of DT with high variance level we can use bootstrapping to create several samples from training set; fit a DT for each sample; calculate the predictions in the case of each sample and finally take the average predictions. The results will be an estimation method with relatively high bias and low variance. 
+
+- The process explained above is called **bagging** and can be used for any model. 
+- Note that, the bagged trees are not pruned and the reduction is done in the averaging process. 
+
+- Assume we have a dataset with 4 predictors including Age, Race, Sex and Education. The outcome of interest is BMI. we will use bootstrapping to create 100 samples of our original dataset. Then, we estimate a DT for each dataset where the predictors are all the same (e.g. BMI ~  Age+ Race + Sex + Education). Now consider a situation where we have a new observation. Considering the values of each predictor, we run the new observation through each tree created in the bagging process. Then we take the average of BMI predicted and come up with the final prediction of our 100 trees for this new observation. 
+
+- In the case of a binary outcome (e.g. obese vs. normal) we use majority voting. So, we run the new observation through each tree and if for instance the number of obese predictions is 70 and normal prediction is 30, we use obesity as final result. 
+
+- Bagging is not highly attractive because it is difficult to interpret the results (you have to check the the plot of each tree separately) to find the most important variables in predicting the final outcome. 
+
+- However, we can use a measure called variable importance (VarImp). VarImp is a measure summing up the DROP in Gini impurity for each variable across all trees. So, the higher the VarImp for each variable the more important the variable will be in predicting the final outcome. 
+
+- While bagging could improve the performance of a DT in terms of lower variance, due to the fact that bootstrapped samples could be very much alike, we might still have some degrees of correlations between the trees. 
+
+- Therefore, RF model uses a trick to overcome the potential correlation between the trees. So, in RF we again use bootstrapping to make 100s of samples and trees. However, we only use a subsample of the predictors at each split. 
+
+- A rule of thumb is if we have X predictors we should consider using square root of X at each split. 
+
+- So, lets say I have 4 predictors including Age, Race, Sex and Education and the outcome is obese or not. I first create 100 sample using bootstrapping. Then I choose 2 predictor randomly (e.g. Age and Sex) to split the observation in the first tree based on total Gini impurity of the two predictors. Then I choose two predictors again randomly to split the observations. This process will continue until I create the first full tree. Similarly I will do the same for all the 100 trees. The rest is similar to the bagging method in terms of making predictions. 
+
+
+
+
+## RF and parsnip 
+
+```{r}
+library(randomForest)
+# estimating the model
+rf_model <- rand_forest(mode = "classification") %>%
+  set_engine("randomForest") %>%
+  fit(obese~.,data=nh_train_1 )
+
+# model results
+ rf_model$fit
+ 
+# we can choose 100 trees 
+plot(rf_model$fit, legend=T)
+
+# VarImp using randomForest package. To the best of my knowledge the VarImp function does not exist in tidymodels. 
+
+randomForest::varImpPlot(rf_model$fit)
+
+## Tune: 
+
+nh_cv <- vfold_cv(nh_train_1, v = 5)
+
+rf_mod <- parsnip::rand_forest(trees = tune() ) %>%
+  set_mode("classification") %>%
+  set_engine("randomForest") 
+
+roc_values_rf <- metric_set(roc_auc)
+
+set.seed(1000)
+model_fit_rf <- tune_grid(
+  obese ~.,model = rf_mod, resamples = nh_cv, metrics = roc_values_rf)
+  
+
+final_param_rf <-select_best(model_fit_rf) %>%
+  as.list()
+
+final_param_rf
+
+
+final_nh_rf <- parsnip::rand_forest(mode = "classification",
+                                    
+                                    trees = final_param_rf$trees
+                                    
+                                    ) %>%
+  parsnip::set_engine("randomForest") %>%
+  parsnip::fit(as.factor(obese) ~., data = nh_train_1)
+
+final_nh_rf
+
+randomForest::varImpPlot(final_nh_rf$fit)
+
+
+predicted_rf <-  predict.model_fit(final_nh_rf,nh_test_1) %>%
+  bind_cols(nh_test_1)
+
+predicted_rf %>%
+  yardstick:: conf_mat(truth = obese, estimate =.pred_class) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+predicted_rf %>%
+  metrics(truth = obese, estimate =.pred_class)
+nh_tree$fit
+```
+
+
+```{r}
+rf_mod <- parsnip::rand_forest(trees = tune(),min_n = tune() ) %>%
+  set_mode("classification") %>%
+  set_engine("randomForest") 
+
+roc_values_rf <- metric_set(roc_auc)
+
+set.seed(1000)
+model_fit_rf <- tune_grid(
+  obese ~.,model = rf_mod, resamples = nh_cv, metrics = roc_values_rf)
+  
+
+final_param_rf <-select_best(model_fit_rf) %>%
+  as.list()
+
+final_param_rf
+
+
+final_nh_rf <- parsnip::rand_forest(mode = "classification",
+                                    mtry =3,
+                                    trees = final_param_rf$trees,
+                                    min_n =final_param_rf$min_n 
+                                    ) %>%
+  parsnip::set_engine("randomForest") %>%
+  parsnip::fit(obese ~., data = nh_train)
+
+final_nh_rf
+
+final_nh_rf
+
+randomForest::varImpPlot(final_nh_rf$fit)
+nh_rf$fit
+
+
+predicted_rf <-  predict.model_fit(final_nh_rf,nh_test) %>%
+  bind_cols(nh_test)
+
+predicted_rf %>%
+yardstick:: conf_mat(truth = obese, estimate =.pred_class) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+predicted_rf %>%
+  metrics(truth = obese, estimate =.pred_class)
+nh_tree$fit
+```
+
+
+
+
+
+
+## Titanic 
+
+
+```{r}
+
+# simple decision tree
+library(ncvreg)
+library(tidymodels)
+
+
+heart <- heart %>%
+  dplyr::select(-adiposity) %>%
+  mutate(chd = as.factor(chd))
+
+
+
+heart_split <- initial_split(heart,prop=.70)
+
+
+h_train <- training(heart_split)
+h_test <- testing(heart_split)
+
+
+h_tree <- parsnip::decision_tree(mode = "classification") %>%
+  parsnip::set_engine("rpart") %>%
+  parsnip::fit(chd ~., data = h_train)
+
+h_tree$fit
+
+
+#plotting the tree
+rpart.plot::rpart.plot(h_tree$fit,type = 5,fallen.leaves = T,roundint = F,extra = 104)
+
+
+```
+
+
+```{r}
+
+# prediction
+predicted_tree_h <-  predict.model_fit(h_tree,h_test) %>%
+  bind_cols(h_test)
+
+
+
+# conf matrix
+predicted_tree_h %>%
+yardstick:: conf_mat(truth = chd, estimate =.pred_class) 
+# kappa and accuracy
+predicted_tree_h %>%
+  metrics(truth = chd, estimate =.pred_class)
+
+
+```
+
+
+```{r}
+# tunning 
+
+
+
+
+
+# making a dataset for CV where the number of CV is 5.
+h_cv <- vfold_cv(h_train, v = 5,repeats = 5 )
+
+# then we tell R to use decision-tree function, with mode of classification, and cost_complexity = tune(). it means we are going to find the best cost_complexity value by tuning. 
+# note that we do not use the fit() function yet. 
+
+tree_mod <- decision_tree(
+  mode ="classification",  
+  cost_complexity = tune(),tree_depth = tune(),min_n = tune()
+  ) %>%
+  set_engine("rpart") 
+
+# then we set the metric. here we want two metrics of accuracy and kap. 
+metric_values_tree <- metric_set(roc_auc)
+
+set.seed(1000)
+
+model_fit_tree <- tune_grid(
+  chd ~., #1
+  resamples = h_cv, #2
+  model = tree_mod, # 3
+  metrics = metric_values_tree) #4
+  
+# now we can use select_best function to find the best value of cost_complexity based on kappa metric. 
+final_param <-select_best(
+  x = model_fit_tree,
+  ) %>%
+  as.list()
+
+final_param
+# finally we estimate the final decision_tree where we use cost_complexity calculated using tune_grid
+final_h_tree <- decision_tree(mode = "classification",
+                               cost_complexity = final_param$cost_complexity, 
+                               tree_depth = final_param$tree_depth, 
+                               min_n = final_param$min_n) %>%
+                 set_engine("rpart") %>%
+                fit(chd ~., data = h_train)
+
+final_h_tree
+rpart.plot::rpart.plot(final_h_tree$fit,type = 5,fallen.leaves = T,roundint = F,extra = 104)
+
+
+#Receiver Operating Characteristics , Area Under Curve => roc_auc
+
+#roc is an important measure in ML for classification. 
+#
+
+
+```
+
+
+```{r}
+
+# evaluate the model performance. 
+predicted_tree_final <-  predict.model_fit(final_h_tree,h_test) %>%
+  bind_cols(h_test)
+
+predicted_tree_final %>%
+yardstick:: conf_mat(truth = chd, estimate =.pred_class) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+predicted_tree_final %>%
+  metrics(truth = chd, estimate =.pred_class)
+
+# confustion matrix 
+# 
+#                      truth
+#                   chd                 health      
+# prediction chd    true-positive    false positive
+#                   
+#           health  false-negative   true-neative  
+# 
+
+## Receiver Operating Characteristics Area under Curve => roc_auc
+## some definition: 
+## sensitivity: the model ability to correctly detect people with CHD 
+## sensitivity = (True Positives)/ (True Positives + False Negative)
+## in the case of the DT for heart data sensitivity = (74)/(74+12)=0.86, it is also called true positive rate(TPR)
+predicted_tree_final %>%
+  sens(truth = chd, estimate =.pred_class)
+
+## specificity = the model ability to correctly detect people who have no CHD 
+## specificity = (True Negative)/(True Negative+False Positive) = (16)/(16+36) = 0.30 
+## 1-0.30=0.70 is called False Positive Rate (FPR). 
+
+predicted_tree_final %>%
+  spec(truth = chd, estimate =.pred_class)
+## 
+## but note that these sepc and sens values are related to a confusion matrix where we used a threshold of 0.41
+## roc  is a method to measure the performance of a classification model at a series of thresholds (threshold to classify an object as ill or healthy. In logistic regression we usually use 0.50 threshold above which we classify as 1 and below which we classify as 0). 
+## the close the roc to upper left corner the better. 
+## roc_auc is a method to compare different models it is area under the roc
+## so the higher the roc_auc the better. 
+## A very good model has  close to 1 (upper left corner) meaning that the sensitivity and specificity are both equal to one. In other words the model does a perfect job in true detection of ill and healthy people. 
+
+
+
+predicted_tree_final_prob <-  predict.model_fit(final_h_tree,h_test,type = "prob") %>%
+  bind_cols(h_test)
+
+tree_roc <- predicted_tree_final_prob %>%
+roc_curve(truth = chd, .pred_0) %>%
+  autoplot()
+
+
+39% , 85%
+```
+
+
+## compare with logistic 
+
+```{r}
+h_logistic <- parsnip::logistic_reg(mode = "classification") %>%
+  parsnip::set_engine("glm") %>%
+  parsnip::fit(chd ~., data = h_train)
+
+
+exp(coef(h_logistic$fit )) 
+
+
+
+predicted_logistic <-  predict.model_fit(h_logistic,h_test) %>%
+  bind_cols(h_test)
+
+predicted_logistic %>%
+yardstick:: conf_mat(truth = chd, estimate =.pred_class) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+predicted_logistic %>%
+  metrics(truth = chd, estimate =.pred_class)
+
+predicted_logitic_prob <-  predict.model_fit(h_logistic,h_test,type = "prob") %>%
+  bind_cols(h_test)
+
+predicted_logitic_prob %>%
+roc_curve(truth = chd, .pred_1) %>%
+  autoplot()
+
+
+
+
+
+
+```
+
+## RF_HEART
+
+```{r}
+rf_mod_h <- parsnip::rand_forest(trees = tune(),min_n = tune() ) %>%
+  set_mode("classification") %>%
+  set_engine("randomForest") 
+
+roc_values_rf <- metric_set(roc_auc)
+
+set.seed(1000)
+model_fit_rf <- tune_grid(
+  chd ~.,model = rf_mod_h, resamples = h_cv, metrics = roc_values_rf)
+  
+
+final_param_rf <-select_best(model_fit_rf) %>%
+  as.list()
+
+final_param_rf
+
+
+final_h_rf <- parsnip::rand_forest(mode = "classification",
+                                    mtry =3,
+                                    trees = final_param_rf$trees,
+                                    min_n =final_param_rf$min_n 
+                                    ) %>%
+  parsnip::set_engine("randomForest") %>%
+  parsnip::fit(chd ~., data = h_train)
+
+final_h_rf
+
+
+randomForest::varImpPlot(final_nh_rf$fit)
+final_h_rf$fit
+
+
+predicted_rf <-  predict.model_fit(final_h_rf,h_test) %>%
+  bind_cols(h_test)
+
+predicted_rf %>%
+yardstick:: conf_mat(truth = chd, estimate =.pred_class) %>%
+  autoplot(cm, type = "heatmap") +
+    scale_fill_distiller(palette = "Set2",direction = 2) 
+
+predicted_rf %>%
+  metrics(truth = chd, estimate =.pred_class)
+
+
+
+  
+
+predicted_rf_prob <-  predict.model_fit(final_h_rf,h_test,type = "prob") %>%
+  bind_cols(h_test)
+
+predicted_rf_prob %>%
+  roc_curve(truth = chd, .pred_1) %>%
+  autoplot()
+
+# compare the models 
+predicted_rf_prob %>%
+roc_auc(truth=chd,.pred_1)
+
+predicted_tree_final_prob %>%
+roc_auc(truth=chd,.pred_1)
+
+predicted_logitic_prob %>%
+roc_auc(truth=chd,.pred_1)
+
+rf:    roc_auc ==> 0.708
+DT:    roc_auc ==> 0.709
+logis   roc_auc ==> 0.75
+```
+
+# Cluster Analysis 
+
+## Finding dietary patterns using kmean clustering 
+
+```{r}
+
+
+library(tidyverse)
+library(tidymodels)
+library(haven)
+library(NbClust)
+library(cluster)
+library(factoextra)
+library(descr)
+
+## Data import and and data cleaning 
+
+cchs <- read_csv("http://blogs.ubc.ca/hosseini/files/2020/03/cchs.csv")
+cchs <- as.data.frame(cchs)
+## selecting only food intake data
+cchs_cluster <- cchs %>%
+  dplyr::select(starts_with("adj"))
+
+# set seeds in case you want to replicate the data
+set.seed(1234)
+
+# find the optimal number of clusters using CH index
+cchs_optimal_no_cluster <- NbClust(data = cchs_cluster, min.nc = 2,max.nc = 7,method = "kmean",index = "ch")
+
+## show the optimal number of clusters that is 3 
+cchs_optimal_no_cluster$Best.nc
+
+fviz_nbclust(x = cchs_cluster, FUNcluster =  kmeans,method ="wss", k.max = 8) 
+glimpse(cchs_cluster)
+# similarly, the WSS method shows 3 cluster is the optimal number of clusters. nstart: remember that at the first step of CL method, 3 random points are chosen. However, their location could affect the pace of finding the optimal number of clusters. For example, if they are very close to each other, it will take more time to split the data points into clusters. So, I here chose 25 meaning that the algorithm chooses 25 sets of random values and choose the best (25*3 = 75)
+cchs_kmean <- kmeans(x = cchs_cluster, 3, nstart = 25)
+
+## use broom to get clean results
+
+kmean_data <- cchs_kmean %>%
+  broom::augment(cchs)
+
+kmean_data <- as.data.frame(kmean_data)
+## find the proportion of individuals in each cluster, n=n() count the number of individual in each cluster. 100*n/sum(n) find proportion of indivudals in each cluster
+kmean_data %>%
+  group_by(.cluster) %>%
+  summarise(n=n()) %>%
+  mutate(distribution = 100*n/sum(n)) %>%
+  ggplot(aes(.cluster, distribution)) +
+  geom_col(aes(fill=.cluster)) +
+  geom_label(aes(label=round(distribution,2)))
+  
+
+## find the mean of age, energy intake in kilo calory and diet quality score. 
+kmean_data %>%
+  group_by(.cluster) %>%
+  summarise_at(vars(age,energy_ekc,diet_quality),lst(mean))
+
+## sex and education 
+#male vs. female
+kmean_data %>%
+  group_by(.cluster,sex) %>%
+  summarise(n=n()) %>%
+  mutate(distribution = 100*n/sum(n)) #%>%
+  ggplot(aes(.cluster, distribution)) +
+  geom_col(aes(fill=.cluster)) +
+  geom_label(aes(label=round(distribution,2)))
+
+# you could also use crosstab function from descr package. 
+# prop.r =T means report row percent 
+# chisq=T means report chi-square. if p-value of chi-square is less than 0.05 we can say that there is significant correlation between sex and being located in at least one of the clusters.  
+crosstab( kmean_data$.cluster,kmean_data$sex,prop.r = T, chisq = T)
+
+crosstab( kmean_data$.cluster,kmean_data$heart_disease,prop.r = T,chisq = T)
+
+crosstab(kmean_data$.cluster,kmean_data$diabetes,prop.r = T,chisq = T)
+
+crosstab(kmean_data$.cluster,kmean_data$education_level_hh,prop.r = T,chisq = T)
+
+
+
+
+
+```
+
+
+# Another Example
+```{r}
+library(NHANES) 
+# data import and cleaning
+nh <- NHANES %>%
+  filter(Age>19) %>%
+  dplyr::select(pulse = Pulse,blood_p_sys= BPSysAve,blood_p_dia= BPDiaAve,total_cholestrol= TotChol, BMI, age=Age, gender = Gender, Depressed= Depressed,education_level = Education,diabetes = Diabetes,alcohol = AlcoholDay) %>%
+  na.omit()
+
+
+# choose the data required for clustering
+nh_cluster <- nh %>%
+  dplyr::select(pulse,blood_p_sys,blood_p_dia,total_cholestrol, BMI,alcohol)
+
+# here because the units of measurement of each variable is not the same, we use recipe package to simply normalize them. so, we use step_normalize and in there we choose all_numeric, in this case, the recipe package understands that it should normalize all the numeric variables. Please note that in recipe(pulse~.,data=nh_cluster), I said pulse is the outcome, this is just a hack to be able to use recipe function because it needs a formula. 
+nh_rec <- recipe(pulse~.,data=nh_cluster) %>%
+  step_normalize(all_numeric(),alcohol) %>%
+  prep() 
+
+nh_z <- nh_rec %>% juice()
+# set seeds
+set.seed(1234)
+# find optimal number of clusters using CH index
+nh_optimal_no_cluster <- NbClust(nh_z, min.nc = 2,max.nc = 4,method = "kmean",index = "ch")
+
+# best number of clusters is 3
+cchs_optimal_no_cluster$Best.nc
+# WSS chooses 2, as previous studies show CH is a better measure, we always go with CH results
+fviz_nbclust(nh_z, kmeans,method ="wss", k.max = 7) 
+# clustering
+set.seed(1234)
+nh_kmean <- kmeans(nh_z,3, nstart = 25)
+
+
+# clean dataset
+
+nh_kmean_results <- nh_kmean %>%
+  broom::augment(nh)
+nh_kmean_results <- as.data.frame(nh_kmean_results)
+# proportion
+nh_kmean_results %>%
+  group_by(.cluster) %>%
+  summarise(n=n()) %>%
+  mutate(proportion = 100*n/sum(n))
+
+centers_nh <- nh_kmean_results %>%
+  group_by(.cluster) %>%
+  summarise_at(vars(pulse,blood_p_sys,blood_p_dia,total_cholestrol, BMI,alcohol),lst(mean))
+
+nh_kmean_results %>%
+  group_by(.cluster) %>%
+  summarise_at(vars(age),lst(mean))
+
+crosstab( nh_kmean_results$.cluster,nh_kmean_results$gender,prop.r = T,chisq = T)
+crosstab( nh_kmean_results$.cluster,nh_kmean_results$diabetes,prop.r = T,chisq = T)
+crosstab( nh_kmean_results$.cluster,nh_kmean_results$Depressed,prop.r = T,chisq = T)
+
+```
+
+## Cluster Analysis and shopping in the case of shopping intention
+
+- The dataset includes information about more than 12000 customers visited an online shopping webpage. 
+- So we want to use k-mean clustering to find out if we can gain an insight about the features of customers purchased an item from the webpage. 
+- Below you can see the 10 numerical variables that we are going to use in Kmean analysis: 
+  + **Administrative**:	Number of pages visited by the visitor about account management
+  + **Administrative duration**:	Total amount of time (in seconds) spent by the visitor on account management related pages.
+  + **Informational**:	Number of pages visited by the visitor about Web site, communication and address information of the shopping site
+  + **Informational duration**:	Total amount of time (in seconds) spent by the visitor on informational pages
+  + **Product related**"	Number of pages visited by visitor about product related pages
+  + **Product related duration**:	Total amount of time (in seconds) spent by the visitor on product related pages
+ + **Bounce rate**:	Average bounce rate value of the pages visited by the visitor
+ + **Exit rate**:	Average exit rate value of the pages visited by the visitor
+ + **Page value**:	Average page value of the pages visited by the visitor
+ + **Special day**:	Closeness of the site visiting time to a special day.
+
+```{r}
+
+cls_df <- read_csv("http://archive.ics.uci.edu/ml/machine-learning-databases/00468/online_shoppers_intention.csv")
+
+cls_df %>% skimr::skim()
+
+cls_df %>%
+  group_by(Revenue) %>%
+  summarise(n=n()) %>%
+  mutate(purchaser = 100*n/sum(n))
+```
+
+## data cleaning online-shopping
+```{r}
+library(tidymodels)
+library(tidyverse)
+cls_df_numeric
+# select the numeric only
+cls_df_numeric <- cls_df %>% 
+  select(Administrative,Administrative_Duration,Informational,Informational_Duration,ProductRelated,ProductRelated_Duration,BounceRates,ExitRates,PageValues,SpecialDay)
+
+# use recipe to normalize the variables
+
+cls_df_rec <- recipe(Administrative~.,data=cls_df_numeric) %>%
+  step_normalize(all_numeric()) %>%
+  prep() 
+
+# juice to get the dataset
+cls_df_z <- cls_df_rec %>%
+  juice()
+
+
+```
+
+
+## Kmean clustering online-shopping
+```{r}
+
+set.seed(1234)
+# find optimal number of clusters using CH index
+cls_df_optimal_no_cluster <- NbClust(cls_df_z, min.nc = 2,max.nc = 8,method = "kmean",index = "ch")
+
+# best number of clusters is 3
+cls_df_optimal_no_cluster$Best.nc
+# WSS chooses 2, as previous studies show CH is a better measure, we always go with CH results
+ 
+# clustering
+set.seed(1234)
+cls_df_kmean <- kmeans(cls_df_z,3, nstart = 25)
+
+```
+
+
+## Results: online-shopping 
+
+### cleaning the dataset
+
+```{r}
+
+# clean dataset by adding cluster variable to the cls_df (initial datasets)
+
+cls_df$cluster <- cls_df_kmean$cluster
+
+# proportion of individuals belonging to each cluster
+cls_df %>%
+  group_by(cluster) %>%
+  summarise(n=n()) %>%
+  mutate(proportion = 100*n/sum(n))
+```
+
+
+### Evaluation of the results. 
+```{r}
+cls_df_kmean$centers
+# centers and clusters
+centers_cls_df <- cls_df %>%
+  group_by(cluster) %>%
+  summarise_at(vars(Administrative,Administrative_Duration,Informational,Informational_Duration,ProductRelated,ProductRelated_Duration,BounceRates,ExitRates,PageValues,SpecialDay),lst(mean))
+
+library(kableExtra)
+
+## centers and clusters
+centers_cls_df %>%
+  kableExtra::kable(digits = 2,format = "html") %>%
+  kable_styling(full_width = F,position = "center",)
+
+
+
+# so we can see that the customers that visit the webpage more than others and spend more time in different pages (cluster 3) are more likely to make a purchase (about 28%). Individuals in the second cluster spend less time browsing the webpage (78% of of customers are in this cluster). The probability of making a purchase by these customers in the second cluster is 15%. However, considering the total number of customers, we can see that most of the revenues come from the consumers from the second clusters. 
+crosstab(cls_df$cluster,cls_df$Revenue,prop.r = T,chisq = T)
+
+```
+
+# Ridge and LASSO Regressions
+
+
+## Data Imports: 
+
+- The dataset used here is called Carseats related to the sale of car seats in a series of stores. 
+- The aim is to find out the factors affecting the sale of car seats (number of car seats sold)
+
+```{r}
+library(skimr)
+library(tidymodels)
+library(tidyverse)
+library(coefplot)
+library(ISLR)
+library(coefplot)
+
+?ISLR::Carseats
+# looking at the data structure and missing values: 
+
+Carseats %>%
+  skim()
+
+# give a new name to the dataset
+df <- Carseats
+df
+# dataset structure
+glimpse(df)
+
+# because the names are stored in a bad way I use clean_name function from janitor package to have clean names. 
+df <- df %>%
+  janitor::clean_names(.)
+
+# price of carseat and sale
+df %>%
+  ggplot(aes(price, sales)) +
+  geom_point() +
+  geom_smooth(method = "lm",se=F) 
+
+
+# shelve location (bad, medium, good) and sale
+df %>%
+  group_by(shelve_loc) %>%
+  summarise(mean_sales = mean(sales)) %>%
+  ggplot(aes(shelve_loc, mean_sales)) +
+  geom_col(aes(fill=shelve_loc)) 
+
+
+?Carseats
+```
+
+## data cleaning 
+
+- We are going transform the factor (character) variables to dummy variables.
+- We are also going to standardize (normalize) all the variables.
+- so I use recipe package
+```{r}
+# splitting the data 
+set.seed(1234)
+df_split <- initial_split(df,prop = .7)
+carseat_tr <- training(df_split)
+carseat_te <- testing(df_split)
+
+carseat_rec <- recipe(sales~., data=df) %>%
+  step_string2factor(all_nominal()) %>%
+  step_dummy(all_nominal(),one_hot = T) %>%
+  step_normalize(all_numeric()) %>%
+  prep()
+
+# make train and test 
+
+test <- carseat_rec %>% 
+  bake(carseat_te)
+
+train <- carseat_rec %>% 
+  juice()
+
+M<-cor(train)
+head(round(M,2))
+library(corrplot)
+corrplot(M,method = "pie",diag = T)
+```
+
+
+## Linear Model 
+
+```{r}
+
+# linear regression 
+carseat_lm <- linear_reg(mode = "regression") %>%
+  set_engine("lm") %>%
+  fit(sales~., data=train)
+
+
+# plot the coefficient 
+
+coefplot.default(carseat_lm$fit,sort="magnitude",intercept = F)
+
+# model performance and metrics 
+# 
+predict_lm_credit <- predict.model_fit(carseat_lm, test) %>%
+  bind_cols(test)
+
+metric_lm <- predict_lm_credit %>%
+  metrics(truth=sales, .pred) %>%
+  mutate(model= "lm")
+
+metric_lm
+```
+
+## Ridge regression
+- In parsnip we can use linear_reg and logistic_reg functions to estimate the ridge, LASSO and elastic net. 
+
+- there are two hyperparameters of penalty and mixture that determine if we want to estimate ridge, LASSO or elastic net. 
+
+- penalty refers to $\lambda$ and mixture refers to $\alpha$. 
+- In the context of elastic net regression, if $\alpha$ (mixture) is equal to 0 we are estimating ridge regression, if it is equal to 1 we are estimating LASSO and if anything between 1 and 0 we are having elastic net regression. 
+
+
+```{r}
+
+## ridge regression 
+## for now I choose an arbitrary penalty of 0.8 (which is rather a high value) but we can use tune package to find the best value fore penalty and mixture.  
+## the engine used here is glmnet written by some of the best living statisticians in the world. 
+carseat_ridge <- linear_reg(mode = "regression", penalty = 0.8, mixture = 0) %>%
+  set_engine("glmnet") %>%
+  fit(sales ~. , data=train)
+
+# extract the coefficients for the penalty =0.8
+coef_ridge <- coef(carseat_ridge$fit,s = 0.8) %>%
+  round(digits = 2)  %>%
+  unlist()
+
+coef_ridge1 <- as.data.frame(coef_ridge[,1])
+# plot the coefficient. 
+# As you can see the magnitude of the coefficients have significantly decreased. 
+
+
+coefplot.default(carseat_ridge$fit,sort="magnitude",intercept = F)
+
+# model performance and metrics 
+
+predict_ridge_credit <- predict.model_fit(carseat_ridge, test) %>%
+  bind_cols(test)
+
+metric_ridge <- predict_ridge_credit %>%
+  metrics(truth=sales, .pred) %>%
+  mutate(model= "ridge")
+
+metric_ridge
+
+```
+
+## LASSO regression 
+
+```{r}
+
+## LASSO regression 
+## in LASSO regression the mixture value should be equal to 1 and penalty an value from zero to infinity. 
+## for now I choose an arbitrary penalty of 0.8 but we can use tune package to find the best value fore penalty and mixture.  
+carseat_lasso <- linear_reg(mode = "regression", penalty = 0.8, mixture = 1) %>%
+  set_engine("glmnet") %>%
+  fit(sales ~. , data=train)
+
+
+# plot the coefficient 
+# The coefficients are smaller than the OLS estimates, however they are larger than the ridge regression' coefficients. 
+# Note that 7 coefficients are removed from the estimates (their value is zero)
+coefplot.default(carseat_lasso$fit,sort="magnitude",intercept = F)
+
+# model performance and metrics 
+
+predict_lasso_credit <- predict.model_fit(carseat_lasso, test) %>%
+  bind_cols(test)
+
+metric_lasso <- predict_lasso_credit %>%
+  metrics(truth=sales, .pred) %>%
+  mutate(model = "lasso")
+
+metric_lasso
+
+
+
+```
+
+
+## Elastic net
+
+```{r}
+
+##  elastic net regression is as a combination of LASSO and ridge regressions, so 0 < mixture <1. 
+## for now I choose an arbitrary penalty of 0.8 and mixture of 0.5 but we can use tune package to find the best value fore penalty and mixture.  
+
+carseat_elastic <- linear_reg(mode = "regression", penalty = 0.8, mixture = 0.5) %>%
+  set_engine("glmnet") %>%
+  fit(sales ~. , data=train)
+
+
+# plot the coefficient 
+
+coefplot(carseat_elastic$fit, sort="magnitude",intercept = F)
+
+# model performance and metrics 
+# 
+predict_elastic_credit <- predict.model_fit(carseat_elastic, test) %>%
+  bind_cols(test)
+
+metric_elastic <- predict_ridge_credit %>%
+  metrics(truth=sales, .pred,) %>%
+  mutate(model = "elastic net")
+metric_elastic
+```
+
+
+## Model Selection using LASSO and tune
+
+- As it was mentioned before, we need to find a proper value for hyperparameters of ridge, lasso and elastic net regressions. 
+- let's look at the case where we estimate our model using LASSO and we will let the penalty $(\lambda)$ value change. 
+- In this case instead of setting a value for penalty we use penalty = varying()
+- the graph below, shows the magnitude of each coefficient at different values of $\lambda$ (penalty).
+- for instance, the magnitude of coefficient of price where the log value of penalty is -6 ($\lambda$ = 0.0024), is equal to $-0.8$. However, as the log of penalty increases and reaches to $-2$, the size of price of coefficient reduces and becomes about $-3.8$. 
+
+- Now, the question is: which value of the $\lambda$ gives us the best results. 
+
+```{r}
+# LASSO with varying penalty
+carseat_lasso_var <- linear_reg(mode = "regression", penalty = varying(), mixture = 1) %>%
+  set_engine("glmnet") %>%
+  fit(sales ~. , data=train)
+
+# plot the lambda and coefficients
+coefpath(carseat_lasso_var$fit)
+
+
+```
+
+## Tune the LASSO
+
+- the answer is hidden in the cross-validation. 
+- so, we make an object spiting the train to 5 sections, and we repeat this process 5 times. 
+- Then we just defined lasso_mod, which just tells R that we want to estimate LASSO regression (mixture =1), where the value of penalty will be determined by tuning. 
+- Then we define the penalty_range. To define the penalty_range we use grid_regular() function. grid_regular has two primary components, penalty() and level = 100. This function already knows about the range of penalty values so it makes 100 sets of values (level = 100) for penalty to be used in tuning process. 
+- then we define metric_values_lasso using metric_set() function. It just will be used later on so, the R knows based on which metric (here rmse) the optimal penalty should be chosen. 
+- I set seed equal to 1000. 
+- Then, I define lasso_grid. lasso_grid stores the results of tuning process. For tuning I use tune_grid() function. The arguments included in the tune_gird() function are
+  + the formula: here sales is a function of all other variables. (sales~.)
+  + resamples: here we tell R that to use the cross-validation object of carseat_cv created above. 
+  + model: is the model defined and here we called i lasso_mod. 
+  + grid: is the object created using grid_regular
+  + metrics: is the object created using metric_set. 
+- Note: if you do not include metric_set or grid arguments, tune_grid() function will choose the values by itself. However, it might not provide the best results. 
+- when the tuning is finished, I will be able to see the results using collect_metrics() function. 
+- Finally I use select_best() function to choose the penalty value giving me the lowest rmse and estimate the final model based on the optimal value of lambda 
+
+
+```{r}
+# resampling using CV 
+carseat_cv <- rsample::vfold_cv(data = train,v = 5,repeats = 5)
+lasso_mod <- linear_reg(mode = "regression",
+                          penalty = tune(), mixture =1) %>%
+  set_engine("glmnet")
+
+penalnty_range <- grid_regular(penalty(), levels = 100)
+metric_values_lasso <- metric_set(rmse)
+
+set.seed(1000)
+
+lasso_grid <-  tune_grid(
+  sales ~., #1
+  resamples = carseat_cv, #2
+  model = lasso_mod,
+  grid = penalnty_range,
+  metrics = metric_values_lasso
+    )
+
+# collect the results after tuning for 100 penalty values 
+lasso_grid_collect <-lasso_grid %>%
+  collect_metrics()
+
+ 
+
+# rmse and lambda values 
+
+lasso_grid_collect %>%
+  ggplot(aes(penalty,mean)) +
+  geom_errorbar(aes(color=.metric,
+    ymin = mean - std_err,
+    ymax = mean + std_err
+  )) +
+    geom_line(size=2,aes(color=.metric)) +
+    facet_wrap(~.metric, scales = "free", nrow = 2) +
+  scale_x_log10() +
+  theme(legend.position = "none")
+
+## select best value of lambda minimizing rmse.       
+best_param <- select_best(lasso_grid, metric = "rmse", maximize = FALSE) %>%
+  as.list()
+
+
+best_param$penalty
+# final model estimation. 
+final_lasso <- linear_reg(mode = "regression",
+                               penalty=best_param$penalty,mixture = 1) %>%
+  
+                 set_engine("glmnet") %>%
+                fit(sales ~., data = train)
+
+# plot the results. 
+# comparing with the situation where penalty = 0.8, we can see that the magnitude of coefficients have increased (become closer to OLS results). However, we are enjoying the use of lower number of variables that are not problematic and explains the model best. 
+coefplot(final_lasso$fit,sort="magnitude",intercept = F)
+
+predict_lasso_carseat_final <- predict.model_fit(final_lasso, test) %>%
+  bind_cols(test)
+
+metric_lasso_final <- predict_lasso_carseat_final %>%
+  metrics(truth=sales, .pred,) %>%
+  mutate(model = "lasso_tuned")
+metric_lasso_final
+
+
+```
+
+## What about elastic net?
+- Below we are going through the same process as above, however, we are now also want to find the optimal mixture values. 
+```{r}
+
+# resampling using CV 
+carseat_cv <- rsample::vfold_cv(data = train,v = 5,repeats = 5)
+elastic_mod <- linear_reg(mode = "regression",
+                        penalty = tune(), mixture =tune()) %>%
+  set_engine("glmnet")
+
+penalnty_mixture_range <- grid_regular(penalty(),mixture(), levels = 30)
+metric_values_elastic <- metric_set(rmse)
+
+set.seed(1000)
+
+
+elastic_grid <-  tune_grid(
+  sales ~., #1
+  resamples = carseat_cv, #2
+  model = elastic_mod,
+  grid = penalnty_mixture_range,
+  metrics = metric_values_elastic
+)
+
+
+elastic_grid_collect <-elastic_grid %>%
+  collect_metrics()
+
+
+
+
+
+penalty1 <-  elastic_grid_collect %>%
+  ggplot(aes(y=mean)) +
+  geom_line(aes(x = penalty, color=.metric)) +
+  scale_x_log10()
+
+penalty2 <-  elastic_grid_collect %>%
+  ggplot(aes(y=mean)) +
+  geom_line(group=1, aes(x = mixture, color=.metric)) +
+  scale_x_log10()
+
+gridExtra::grid.arrange(penalty1,penalty2,ncol=2)
+best_param <- select_best(elastic_grid, metric = "rmse", maximize = FALSE) %>%
+  as.list()
+
+
+final_elastic <- linear_reg(mode = "regression",
+                          penalty=best_param$penalty,mixture = best_param$mixture) %>%
+  
+  set_engine("glmnet") %>%
+  fit(sales ~., data = train)
+
+coefplot(final_elastic$fit,sort="magnitude",intercept = F)
+
+predict_elastic_carseat_final <- predict.model_fit(final_elastic, test) %>%
+  bind_cols(test)
+
+metric_elastic_final <- predict_elastic_carseat_final %>%
+  metrics(truth=sales, .pred) %>% 
+  mutate(model ="elastic_tuned")
+metric_elastic_final
+
+
+```
+
+
+
+
+## Compare the models performance 
+
+```{r}
+all_models <- bind_rows(metric_lm,metric_ridge, metric_lasso, metric_elastic, metric_lasso_final, metric_elastic_final) %>%
+  filter(.metric == "rmse")
+
+all_models %>%
+  mutate(model = fct_reorder(model, .estimate)) %>%
+  ggplot(aes(model, .estimate)) +
+  geom_col(aes(fill=model),sort=T)
+
+
+```
+
+
+
+## LASSO, the example of a dataset with tens of variables. 
+- The dataset called Ames housing is related to the Sale price of about 3000 houses in Iowa in the U.S it includes 82 variables related to the characteristics of each house including size, number of bedrooms, backyard, the presence of basement, location etc. 
+
+- The main idea is how can we use this information to predict the sale price of a house. 
+
+- So, I am looking for the most important variables and their impact on a house value. 
+
+```{r}
+library(skimr)
+library(tidymodels)
+library(tidyverse)
+library(coefplot)
+library(ISLR)
+library(AmesHousing)
+
+
+
+# looking at the data structure and missing values: 
+ames_raw %>%
+  skim()
+# some of the variables have several missing values, we drop the ones that have too many missing values 
+ames_raw <- ames_raw
+
+# use skim function to report some of the characteristics of the dataset including the number of missing observations for each variable.
+ames_raw %>%
+  skim() 
+
+df_missing <- ames_raw %>%
+  skim()
+df_missing
+# for instance, I only want to keep the variables with less than 100 missing observations. 
+df_missing_list <- df_missing %>%
+  select(skim_variable,n_missing) %>%
+  filter(n_missing<100)
+
+# now I can simply feed the information collected above to the select function for our original dataset and then I will drop all the missing values. PID and Order should be dropped to they are more like ID numbers
+df_ames <- ames_raw %>%
+  select(df_missing_list$skim_variable, -PID,-Order) %>%
+  na.omit()
+
+# because the names are stored in a bad way I use clean_name function from janitor package to have clean names. 
+df_ames <- df_ames %>%
+  janitor::clean_names(.)
+
+glimpse(df_ames)
+
+```
+
+## data cleaning Ames Housing
+
+- The main point to consider is to transform the factor (character) variables here to dummy variables and normalize all the variables.  
+- so I use recipe package
+```{r}
+# splitting the data 
+
+ames_split <- initial_split(df_ames,prop = .7)
+ames_tr <- training(ames_split)
+ames_te <- testing(ames_split)
+
+ames_rec <- recipe(sale_price~., data=ames_tr) %>%
+  step_string2factor(all_nominal()) %>%
+  step_dummy(all_nominal(),one_hot = T) %>%
+  step_normalize(all_numeric()) %>%
+  prep()
+
+ames_test <- ames_rec %>% 
+  bake(ames_te)
+ames_train <- ames_rec %>% 
+  juice()
+
+```
+
+## LASSO and Housing price
+```{r}
+# resampling using CV 
+ames_cv <- rsample::vfold_cv(data = ames_train,v = 5)
+lasso_mod_ames <- linear_reg(mode = "regression",
+                          penalty = tune(), mixture =1) %>%
+  set_engine("glmnet")
+
+penalnty_range_ames <- grid_regular(penalty(), levels = 200)
+metric_values_lasso_ames <- metric_set(rmse)
+
+set.seed(1000)
+
+lasso_grid_ames <-  tune_grid(
+  sale_price ~., #1
+  resamples = ames_cv, #2
+  model = lasso_mod_ames,
+  grid = penalnty_range_ames,
+  metrics = metric_values_lasso_ames
+    )
+
+# collect the results after tuning for 100 penalty values 
+lasso_grid_collect_ames <-lasso_grid_ames %>%
+  collect_metrics()
+
+ 
+
+# rmse and lambda values 
+
+lasso_grid_collect_ames %>%
+  ggplot(aes(penalty,mean)) +
+  geom_errorbar(aes(color=.metric,
+    ymin = mean - std_err,
+    ymax = mean + std_err
+  )) +
+    geom_line(size=2,aes(color=.metric)) +
+    facet_wrap(~.metric, scales = "free", nrow = 2) +
+  scale_x_log10() +
+  theme(legend.position = "none")
+
+## select best value of lambda minimizing rmse.       
+best_param_ames <- select_best(lasso_grid_ames, metric = "rmse", maximize = FALSE) %>%
+  as.list()
+
+# final model estimation. 
+final_lasso_ames <- linear_reg(mode = "regression",
+                               penalty=best_param$penalty,mixture = 1) %>%
+  
+                 set_engine("glmnet") %>%
+                fit(sale_price ~., data = ames_train)
+
+# plot the results. 
+# comparing with the situation where penalty = 0.8, we can see that the magnitude of coefficients have increased (become closer to OLS results). However, we are enjoying the use of lower number of variables that are not problematic and explains the model best. 
+coefplot(final_lasso_ames$fit,sort="magnitude",intercept = F)
+
+predict_lasso_ames_final <- predict.model_fit(final_lasso_ames, ames_test) %>%
+  bind_cols(ames_test)
+
+metric_lasso_final_ames <- predict_lasso_ames_final %>%
+  metrics(truth=sale_price, .pred,) %>%
+  mutate(model = "lasso_tuned")
+metric_lasso_final_ames
+
+
+```
+
+
+## Elastic net and housing 
+
+```{r}
+# resampling using CV 
+ames_cv <- rsample::vfold_cv(data = ames_train,v = 5)
+elstic_mod_ames <- linear_reg(mode = "regression",
+                          penalty = tune(), mixture =tune()) %>%
+  set_engine("glmnet")
+
+penalnty_range_ames_elastic <- grid_regular(penalty(),mixture(), levels = 20)
+metric_values_elastic_ames <- metric_set(rmse)
+
+set.seed(1000)
+doParallel::registerDoParallel()
+elastic_grid_ames <-  tune_grid(
+  sale_price ~., #1
+  resamples = ames_cv, #2
+  model = elstic_mod_ames,
+  grid = penalnty_range_ames_elastic,
+  metrics = metric_values_elastic_ames
+    )
+
+# collect the results after tuning for 100 penalty values 
+elastic_grid_collect_ames <-elastic_grid_ames %>%
+  collect_metrics()
+
+ 
+
+# rmse and lambda values 
+
+elastic_grid_collect_ames %>%
+  ggplot(aes(penalty,mean)) +
+  geom_errorbar(aes(color=.metric,
+    ymin = mean - std_err,
+    ymax = mean + std_err
+  )) +
+    geom_line(size=2,aes(color=.metric)) +
+    facet_wrap(~.metric, scales = "free", nrow = 2) +
+  scale_x_log10() +
+  theme(legend.position = "none")
+
+
+elastic_grid_collect_ames %>%
+  ggplot(aes(mixture,mean)) +
+  geom_errorbar(aes(color=.metric,
+    ymin = mean - std_err,
+    ymax = mean + std_err
+  )) +
+    geom_line(size=2,aes(color=.metric)) +
+    facet_wrap(~.metric, scales = "free", nrow = 2) +
+  scale_x_log10() +
+  theme(legend.position = "none")
+
+## select best value of lambda and alpha minimizing rmse.       
+best_param_ames_elastic <- select_best(elastic_grid_ames, metric = "rmse", maximize = FALSE) %>%
+  as.list()
+
+# final model estimation. 
+final_elastic_ames <- linear_reg(mode = "regression",
+                               penalty=best_param_ames_elastic$penalty,mixture=best_param_ames_elastic$mixture) %>%
+  
+                 set_engine("glmnet") %>%
+                fit(sale_price ~., data = ames_train)
+
+# plot the results. 
+# comparing with the situation where penalty = 0.8, we can see that the magnitude of coefficients have increased (become closer to OLS results). However, we are enjoying the use of lower number of variables that are not problematic and explains the model best. 
+coefplot(final_elastic_ames$fit,sort="magnitude",intercept = F)
+
+predict_elastic_ames_final <- predict.model_fit(final_elastic_ames, ames_test) %>%
+  bind_cols(ames_test)
+
+metric_elastic_final_ames <- predict_elastic_ames_final %>%
+  metrics(truth=sale_price, .pred,) %>%
+  mutate(model = "elastic_tuned")
+metric_elastic_final_ames
+
+
+```
+
+
+
+
+
+
+
